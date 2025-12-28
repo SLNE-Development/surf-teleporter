@@ -165,8 +165,8 @@ object TeleporterEditDialog {
                     length = length
                 )
 
-                teleporterService.updateTeleporterVisualization(newTeleporter)
-                teleporterService.updateTeleporter(newTeleporter)
+                teleporterService.deleteTeleporter(newTeleporter)
+                teleporterService.addTeleporter(newTeleporter)
 
                 player.showDialog(TeleportCreateSuccessDialog.showDialog(newTeleporter))
             }

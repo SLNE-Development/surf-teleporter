@@ -15,21 +15,14 @@ class TeleporterManager {
         addTeleporter(porter)
     }
 
-    fun unregisterTeleporter(porter: Teleporter) {
-        deleteTeleporter(porter)
-    }
-
     fun addTeleporter(porter: Teleporter) {
         teleporter.add(porter)
+        visualizeTeleporterForAll(porter)
     }
 
     fun deleteTeleporter(porter: Teleporter) {
+        removeTeleportVisualization(porter)
         teleporter.removeIf { it.uuid == porter.uuid }
-    }
-
-    fun updateTeleporter(porter: Teleporter) {
-        deleteTeleporter(porter)
-        addTeleporter(porter)
     }
 
     fun getTeleporterAt(location: Location): Teleporter? {
@@ -43,7 +36,7 @@ class TeleporterManager {
         }
     }
 
-    fun visualizePadForAll(porter: Teleporter) {
+    fun visualizeTeleporterForAll(porter: Teleporter) {
         for (player in server.onlinePlayers) {
             visualizeTeleporter(player, porter)
         }
@@ -76,12 +69,7 @@ class TeleporterManager {
         }
     }
 
-    fun updateTeleporterVisualization(porter: Teleporter) {
-        removePadVisualization(porter) // FIXME: box visualization not updating correctly after edited origin coordinates
-        visualizePadForAll(porter)
-    }
-
-    fun removePadVisualization(porter: Teleporter) {
+    fun removeTeleportVisualization(porter: Teleporter) {
         val origin = porter.originLocation
         val world = origin.world
 
@@ -94,7 +82,7 @@ class TeleporterManager {
                 val y = origin.blockY - 1
                 val z = origin.blockZ + dz
 
-                val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
+                val location = world.getBlockAt(x, y, z).location
 
                 for (player in server.onlinePlayers) {
                     glowingApi.removeGlowing(location, player)
@@ -102,6 +90,7 @@ class TeleporterManager {
             }
         }
     }
+
 
     fun getteleporters(): List<Teleporter> = teleporter.toList()
 

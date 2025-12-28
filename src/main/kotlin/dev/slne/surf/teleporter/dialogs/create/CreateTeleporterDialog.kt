@@ -144,7 +144,6 @@ object CreateTeleporterDialog {
                     length = length
                 )
                 teleporterService.addTeleporter(teleporter)
-                teleporterService.visualizePadForAll(teleporter)
                 player.showDialog(TeleportCreateSuccessDialog.showDialog(teleporter))
             }
         }
