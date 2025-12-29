@@ -19,7 +19,7 @@ class TeleporterManager {
         teleporter.removeIf { it.uuid == porter.uuid }
     }
 
-    fun updatePad(porter: Teleporter) {
+    fun updateTeleporter(porter: Teleporter) {
         deleteTeleporter(porter)
         addTeleporter(porter)
     }

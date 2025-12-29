@@ -84,7 +84,6 @@ object TeleporterDeleteDialog {
         tooltip { info("Klicke hier, um den Teleporter zu löschen.") }
         action {
             playerCallback {
-                teleporterService.removeTeleportVisualization(teleporter)
                 teleporterService.deleteTeleporter(teleporter)
                 it.showDialog(TeleporterListDialog.showDialog())
             }

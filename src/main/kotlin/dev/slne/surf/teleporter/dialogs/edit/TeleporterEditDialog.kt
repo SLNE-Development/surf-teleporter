@@ -9,9 +9,7 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.type
 import dev.slne.surf.surfapi.bukkit.api.extensions.server
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
-import dev.slne.surf.teleporter.dialogs.create.CreateTeleporterDialog
 import dev.slne.surf.teleporter.dialogs.create.results.TeleportCreateSuccessDialog
-import dev.slne.surf.teleporter.dialogs.create.results.TeleportCreationFailResultDialog
 import dev.slne.surf.teleporter.dialogs.edit.result.TeleporterEditFailResultDialog
 import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
@@ -28,7 +26,7 @@ object TeleporterEditDialog {
     private const val TARGET_LOCATION_WORLD_KEY = "teleporter_target_location_world"
     private const val BOX_KEY = "teleporter_box"
 
-    private val locationRegex by lazy { Regex("^-?\\d+\\s-?\\d+\\s-?\\d+\$") }
+    private val locationRegex by lazy { Regex("^-?\\d+\\s-?\\d+\\s-?\\d+$") }
     private val boxRegex by lazy { Regex("^\\d+x\\d+$") }
 
     fun showDialog(teleporter: Teleporter) = dialog {
@@ -165,9 +163,7 @@ object TeleporterEditDialog {
                     length = length
                 )
 
-                teleporterService.deleteTeleporter(newTeleporter)
-                teleporterService.addTeleporter(newTeleporter)
-
+                teleporterService.updateTeleporter(newTeleporter)
                 player.showDialog(TeleportCreateSuccessDialog.showDialog(newTeleporter))
             }
         }
