@@ -150,7 +150,7 @@ object TeleporterEditDialog {
                 val targetWorld = server.getWorld(targetWorldName)
 
                 if (!validLocation || !validTargetLocation || !validBox || originWorld == null || targetWorld == null || boxTooLarge) {
-                    player.showDialog(TeleportCreationFailResultDialog.showDialog())
+                    player.showDialog(TeleporterEditFailResultDialog.showDialog(oldTeleporter))
                     return@customClick
                 }
 

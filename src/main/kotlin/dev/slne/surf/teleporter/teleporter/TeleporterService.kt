@@ -1,10 +1,6 @@
 package dev.slne.surf.teleporter.teleporter
 
-import dev.slne.surf.surfapi.bukkit.api.extensions.server
-import dev.slne.surf.surfapi.bukkit.api.glow.glowingApi
-import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Location
-import org.bukkit.entity.Player
 
 class TeleporterManager {
 
@@ -17,12 +13,15 @@ class TeleporterManager {
 
     fun addTeleporter(porter: Teleporter) {
         teleporter.add(porter)
-        visualizeTeleporterForAll(porter)
     }
 
     fun deleteTeleporter(porter: Teleporter) {
-        removeTeleportVisualization(porter)
         teleporter.removeIf { it.uuid == porter.uuid }
+    }
+
+    fun updatePad(porter: Teleporter) {
+        deleteTeleporter(porter)
+        addTeleporter(porter)
     }
 
     fun getTeleporterAt(location: Location): Teleporter? {
@@ -35,62 +34,6 @@ class TeleporterManager {
                     location.blockY == pad.originLocation.blockY
         }
     }
-
-    fun visualizeTeleporterForAll(porter: Teleporter) {
-        for (player in server.onlinePlayers) {
-            visualizeTeleporter(player, porter)
-        }
-    }
-
-    fun visualizeTeleportersForSpecific(player: Player) {
-        getteleporters().forEach { porter ->
-            visualizeTeleporter(player, porter)
-        }
-    }
-
-    private fun visualizeTeleporter(player: Player, porter: Teleporter) {
-        val origin = porter.originLocation
-        val world = origin.world
-
-        val halfWidth = porter.width / 2
-        val halfLength = porter.length / 2
-
-
-        for (dx in -halfWidth..halfWidth) {
-            for (dz in -halfLength..halfLength) {
-                val x = origin.blockX + dx
-                val y = origin.blockY - 1
-                val z = origin.blockZ + dz
-
-                val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
-
-                glowingApi.makeGlowing(location, player, NamedTextColor.DARK_PURPLE)
-            }
-        }
-    }
-
-    fun removeTeleportVisualization(porter: Teleporter) {
-        val origin = porter.originLocation
-        val world = origin.world
-
-        val halfWidth = porter.width / 2
-        val halfLength = porter.length / 2
-
-        for (dx in -halfWidth..halfWidth) {
-            for (dz in -halfLength..halfLength) {
-                val x = origin.blockX + dx
-                val y = origin.blockY - 1
-                val z = origin.blockZ + dz
-
-                val location = world.getBlockAt(x, y, z).location
-
-                for (player in server.onlinePlayers) {
-                    glowingApi.removeGlowing(location, player)
-                }
-            }
-        }
-    }
-
 
     fun getteleporters(): List<Teleporter> = teleporter.toList()
 

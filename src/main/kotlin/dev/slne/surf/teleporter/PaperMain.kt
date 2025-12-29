@@ -3,7 +3,6 @@ package dev.slne.surf.teleporter
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.surfapi.bukkit.api.event.register
 import dev.slne.surf.teleporter.commands.teleporterCommand
-import dev.slne.surf.teleporter.listeners.PlayerJoinListener
 import dev.slne.surf.teleporter.listeners.PlayerMoveListener
 import dev.slne.surf.teleporter.storage.storageService
 import org.bukkit.plugin.java.JavaPlugin
@@ -14,7 +13,6 @@ class PaperMain : SuspendingJavaPlugin() {
         teleporterCommand()
 
         PlayerMoveListener.register()
-        PlayerJoinListener.register()
 
         storageService.init()
         storageService.loadTeleporters()

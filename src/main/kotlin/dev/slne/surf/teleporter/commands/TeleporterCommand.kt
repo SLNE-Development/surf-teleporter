@@ -41,7 +41,7 @@ fun teleporterCommand() = commandAPICommand("teleporter") {
 
             player.sendText {
                 appendPrefix()
-                error("An dieser Stelle befindet sich kein Teleporter! ")
+                error("An dieser Stelle befindet sich kein Teleporter!")
                 appendNewPrefixedLine()
                 error("Klicke ")
                 append(clickable)

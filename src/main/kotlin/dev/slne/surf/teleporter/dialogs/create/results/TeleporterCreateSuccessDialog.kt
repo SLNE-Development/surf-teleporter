@@ -27,6 +27,7 @@ object TeleportCreateSuccessDialog {
                 plainMessage(400) {
                     success("Erfolg!", TextDecoration.BOLD)
                     appendNewline(2)
+
                     success("Der teleporter wurde erfolgreich erstellt!")
                 }
             }

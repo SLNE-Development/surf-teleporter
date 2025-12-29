@@ -38,7 +38,6 @@ object TeleporterDeleteDialog {
                         info("Im Folgenden siehst du die aktuellen Werte des Teleporters.")
                         appendNewline(2)
 
-                        appendNewline(2)
                         primary("UUID: ")
                         variableValue(teleporter.uuid.toString())
                         appendNewline(2)

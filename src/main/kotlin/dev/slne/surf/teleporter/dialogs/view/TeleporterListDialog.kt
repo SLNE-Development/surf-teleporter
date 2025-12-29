@@ -51,7 +51,6 @@ object TeleporterListDialog {
                         info(" Teleporter.")
                         appendNewline(2)
                     }
-
                 }
             }
 
