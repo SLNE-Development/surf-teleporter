@@ -34,9 +34,9 @@ object PlayerInteractListener : Listener {
         }
 
         player.sendText {
-            appendPrefix()
+            appendErrorPrefix()
             error("An dieser Stelle befindet sich ein Teleporter!")
-            appendNewPrefixedLine()
+            appendNewErrorPrefixedLine()
             error("Klicke ")
             append(clickable)
             error(" um dir den Teleporter anzusehen!")
