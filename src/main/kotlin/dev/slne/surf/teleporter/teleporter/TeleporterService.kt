@@ -2,7 +2,9 @@ package dev.slne.surf.teleporter.teleporter
 
 import org.bukkit.Location
 
-class TeleporterManager {
+val teleporterService = TeleporterManager
+
+object TeleporterManager {
 
     private val teleporter = mutableSetOf<Teleporter>()
 
@@ -35,11 +37,7 @@ class TeleporterManager {
         }
     }
 
-    fun getteleporters(): List<Teleporter> = teleporter.toList()
+    fun getTeleporters(): List<Teleporter> = teleporter.toList()
 
-    companion object {
-        val INSTANCE = TeleporterManager()
-    }
+    val teleporterCount: Int get() = teleporter.size
 }
-
-val teleporterService get() = TeleporterManager.INSTANCE

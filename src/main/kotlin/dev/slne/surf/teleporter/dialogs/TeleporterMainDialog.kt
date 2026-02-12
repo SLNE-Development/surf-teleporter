@@ -16,13 +16,13 @@ import io.papermc.paper.registry.data.dialog.ActionButton
 object TeleporterMainDialog {
     fun showDialog() = dialog {
         base {
-            val teleporters = teleporterService.getteleporters()
+            val teleporters = teleporterService.teleporterCount
             title { primary("TELEPORTER".toSmallCaps()) }
 
             body {
                 plainMessage(400) {
                     info("Aktuell existieren ")
-                    variableValue(teleporters.size)
+                    variableValue(teleporters)
                     info(" Teleporter.")
                     appendNewline(2)
                 }

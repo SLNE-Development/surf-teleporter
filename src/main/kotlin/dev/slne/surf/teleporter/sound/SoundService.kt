@@ -5,8 +5,9 @@ import net.kyori.adventure.sound.Sound as AdventureSound
 import org.bukkit.Sound as BukkitSound
 import org.bukkit.entity.Player
 
-class SoundService {
+val soundService = SoundService
 
+object SoundService {
     fun playTeleportSound(player: Player) {
         player.playSound(true) {
             type(BukkitSound.ENTITY_ENDERMAN_TELEPORT)
@@ -14,10 +15,4 @@ class SoundService {
             pitch(1.0f)
         }
     }
-
-    companion object {
-        val INSTANCE = SoundService()
-    }
 }
-
-val soundService get() = SoundService.INSTANCE

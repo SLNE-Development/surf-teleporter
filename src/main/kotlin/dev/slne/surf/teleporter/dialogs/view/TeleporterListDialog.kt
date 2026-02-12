@@ -17,7 +17,7 @@ import io.papermc.paper.dialog.Dialog
 
 object TeleporterListDialog {
     fun showDialog(): Dialog {
-        val teleporters = teleporterService.getteleporters()
+        val teleporters = teleporterService.getTeleporters()
 
         val dialogList = buildPadDialogList(teleporters)
         if (dialogList.isEmpty()) {
@@ -33,7 +33,7 @@ object TeleporterListDialog {
                     }
                 }
                 type {
-                    confirmation(backButton(), createButton())
+                    confirmation(createButton(), backButton())
                 }
             }
         }

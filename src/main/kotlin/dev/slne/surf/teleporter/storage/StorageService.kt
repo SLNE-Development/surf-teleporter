@@ -50,7 +50,7 @@ class StorageService {
             .filter { it.toString().endsWith(".yml") }
             .forEach(Files::delete)
 
-        val teleporter = teleporterService.getteleporters()
+        val teleporter = teleporterService.getTeleporters()
 
         teleporter.forEach { porter ->
             val file = teleporterFolder.resolve("${porter.uuid}.yml").toFile()

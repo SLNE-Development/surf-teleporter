@@ -28,13 +28,13 @@ object TeleportCreateSuccessDialog {
                     success("Erfolg!", TextDecoration.BOLD)
                     appendNewline(2)
 
-                    success("Der teleporter wurde erfolgreich erstellt!")
+                    success("Der Teleporter wurde erfolgreich erstellt!")
                 }
             }
         }
 
         type {
-            confirmation(backButton(), teleportButton(teleporter))
+            confirmation(teleportButton(teleporter), backButton())
         }
     }
 

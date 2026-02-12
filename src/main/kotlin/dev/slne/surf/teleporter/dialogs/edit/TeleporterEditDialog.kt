@@ -17,7 +17,6 @@ import dev.slne.surf.teleporter.teleporter.teleporterService
 import io.papermc.paper.registry.data.dialog.ActionButton
 import org.bukkit.Location
 import org.bukkit.World
-import org.bukkit.entity.Player
 
 object TeleporterEditDialog {
     private const val LOCATION_KEY = "teleporter_location"
