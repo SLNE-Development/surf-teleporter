@@ -129,8 +129,7 @@ object TeleporterEditDialog {
         label { success("Änderungen speichern") }
         tooltip { info("Klicke hier, um die Änderungen zu übernehmen.") }
         action {
-            customClick { content, audience ->
-                val player = audience as? Player ?: return@customClick
+            customPlayerClick { content, player ->
 
                 val locationString = content.getText(LOCATION_KEY) ?: ""
                 val targetLocationString = content.getText(TARGET_LOCATION_KEY) ?: ""
@@ -149,7 +148,7 @@ object TeleporterEditDialog {
 
                 if (!validLocation || !validTargetLocation || !validBox || originWorld == null || targetWorld == null || boxTooLarge) {
                     player.showDialog(TeleporterEditFailResultDialog.showDialog(oldTeleporter))
-                    return@customClick
+                    return@customPlayerClick
                 }
 
                 val origin = parseLocation(locationString, originWorld)

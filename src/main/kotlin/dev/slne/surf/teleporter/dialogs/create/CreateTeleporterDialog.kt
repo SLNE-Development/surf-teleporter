@@ -109,8 +109,7 @@ object CreateTeleporterDialog {
             info("Klicke hier, um den Teleporter zu erstellen.")
         }
         action {
-            customClick { content, audience ->
-                val player = audience as? Player ?: return@customClick
+            customPlayerClick { content, player ->
 
                 val locationString = content.getText(LOCATION_KEY) ?: ""
                 val targetLocationString = content.getText(TARGET_LOCATION_KEY) ?: ""
@@ -129,7 +128,7 @@ object CreateTeleporterDialog {
 
                 if (!validLocation || !validTargetLocation || !validBox || originWorld == null || targetWorld == null || boxTooLarge) {
                     player.showDialog(TeleportCreationFailResultDialog.showDialog())
-                    return@customClick
+                    return@customPlayerClick
                 }
 
                 val origin = parseLocation(locationString, originWorld)

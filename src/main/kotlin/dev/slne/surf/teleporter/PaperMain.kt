@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class PaperMain : SuspendingJavaPlugin() {
 
-    override fun onEnable() {
+    override suspend fun onEnableAsync() {
         teleporterCommand()
 
         PlayerMoveListener.register()
