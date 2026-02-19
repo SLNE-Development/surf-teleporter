@@ -18,18 +18,17 @@ import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Location
 
 fun teleporterCommand() = commandAPICommand("teleporter") {
-
     withPermission(Permissions.COMMAND_TELEPORTER_GENERIC)
-    locationArgument("location", LocationType.BLOCK_POSITION, optional = true)
+    locationArgument("teleporterLocation", LocationType.BLOCK_POSITION, optional = true)
 
     playerExecutor { player, arguments ->
-        val location = arguments.getUnchecked<Location>("location")
-        if (location == null) {
+        val teleporterLocation = arguments.getUnchecked<Location>("teleporterLocation")
+        if (teleporterLocation == null) {
             player.showDialog(TeleporterMainDialog.showDialog())
             return@playerExecutor
         }
-        val teleporterAtBlock = teleporterService.getTeleporterAt(location)
-        val teleporterAbove = teleporterService.getTeleporterAt(location.clone().add(0.0, 1.0, 0.0))
+        val teleporterAtBlock = teleporterService.getTeleporterAt(teleporterLocation)
+        val teleporterAbove = teleporterService.getTeleporterAt(teleporterLocation.clone().add(0.0, 1.0, 0.0))
         val teleporter = teleporterAtBlock ?: teleporterAbove
 
         if (teleporter == null) {

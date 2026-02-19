@@ -7,10 +7,11 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.seconds
 
 object PlayerMoveListener : Listener {
-    private val cooldowns: MutableMap<UUID, Long> = mutableMapOf()
+    private val cooldowns: ConcurrentHashMap<UUID, Long> = ConcurrentHashMap()
     private val cooldown: Long = 3.seconds.inWholeMilliseconds
 
     @EventHandler

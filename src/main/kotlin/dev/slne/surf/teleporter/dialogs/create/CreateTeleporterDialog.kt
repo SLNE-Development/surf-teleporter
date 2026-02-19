@@ -59,7 +59,7 @@ object CreateTeleporterDialog {
 
             input {
                 text(LOCATION_KEY) {
-                    label { text("Location") }
+                    label { text("Startposition") }
                     initial("${player.location.blockX} ${player.location.blockY} ${player.location.blockZ}")
                     width(400)
                 }
@@ -67,7 +67,7 @@ object CreateTeleporterDialog {
 
             input {
                 text(LOCATION_WORLD_KEY) {
-                    label { text("Location World") }
+                    label { text("Startwelt") }
                     initial(player.world.name)
                     width(400)
                 }
@@ -75,7 +75,7 @@ object CreateTeleporterDialog {
 
             input {
                 text(TARGET_LOCATION_KEY) {
-                    label { text("TaregetLocation") }
+                    label { text("Zielpositoin") }
                     initial("0 100 0")
                     width(400)
                 }
@@ -83,7 +83,7 @@ object CreateTeleporterDialog {
 
             input {
                 text(TARGET_LOCATION_WORLD_KEY) {
-                    label { text("TargetLocation World") }
+                    label { text("Zielwelt") }
                     initial(player.world.name)
                     width(400)
                 }
