@@ -4,6 +4,7 @@ import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
+import dev.slne.surf.teleporter.permissions.Permissions
 import dev.slne.surf.teleporter.teleporter.teleporterService
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
@@ -19,6 +20,8 @@ object PlayerInteractListener : Listener {
         val block = event.clickedBlock ?: return
         val location = block.location
         val player = event.player
+
+        if (!player.hasPermission(Permissions.COMMAND_TELEPORTER_GENERIC)) return
 
         val padAtBlock = teleporterService.getTeleporterAt(location)
 
