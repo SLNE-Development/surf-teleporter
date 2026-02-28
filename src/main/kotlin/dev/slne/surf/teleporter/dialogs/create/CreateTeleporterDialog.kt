@@ -7,16 +7,19 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
 import dev.slne.surf.surfapi.bukkit.api.dialog.dialog
 import dev.slne.surf.surfapi.bukkit.api.dialog.type
 import dev.slne.surf.surfapi.bukkit.api.extensions.server
-import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
+import dev.slne.surf.teleporter.appendBullet
+import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
 import dev.slne.surf.teleporter.dialogs.TeleporterMainDialog
 import dev.slne.surf.teleporter.dialogs.error.InvalidField
 import dev.slne.surf.teleporter.dialogs.error.TeleporterActionType
 import dev.slne.surf.teleporter.dialogs.error.TeleporterErrorDialog
 import dev.slne.surf.teleporter.dialogs.error.TeleporterSuccessDialog
+import dev.slne.surf.teleporter.formatToCoordString
 import dev.slne.surf.teleporter.teleporter.TeleporterService
 import dev.slne.surf.teleporter.teleporter.teleporter
 import io.papermc.paper.registry.data.dialog.ActionButton
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -30,7 +33,7 @@ object CreateTeleporterDialog {
     private const val BOX_KEY = "teleporter_box"
 
     private val locationRegex by lazy {
-        Regex("""^-?\d+(\.\d+)?\s-?\d+(\.\d+)?\s-?\d+(\.\d+)?\s-?\d+\s-?\d+$""")
+        Regex("^-?\\d+(\\.\\d{1,2})?(?:\\s+-?\\d+(\\.\\d{1,2})?){4}$")
     }
     private val boxRegex by lazy { Regex("^\\d+x\\d+$") }
 
@@ -41,20 +44,21 @@ object CreateTeleporterDialog {
         val uuid = UUID.randomUUID()
 
         base {
-            title {
-                primary("TELEPORTER ".toSmallCaps())
-                success("ERSTELLEN".toSmallCaps())
-            }
+            title(DIALOG_TITLE)
 
             body {
                 plainMessage(400) {
-                    primary("Du bist dabei einen neuen Teleporter zu erstellen.")
+                    primary(
+                        "Du bist dabei einen neuen Teleporter zu erstellen.",
+                        TextDecoration.BOLD,
+                        TextDecoration.UNDERLINED
+                    )
                     appendNewline(2)
 
                     info("Folgende Welten können zur Erstellung verwendet werden:")
                     appendNewline()
                     server.worlds.forEach { world ->
-                        spacer("- ")
+                        appendBullet()
                         variableValue(world.name)
                         appendNewline()
                     }
@@ -67,11 +71,11 @@ object CreateTeleporterDialog {
 
             input {
                 text(LOCATION_KEY) {
-                    label { text("Startposition") }
+                    label { text("Startposition (X Y Z Pitch Yaw)") }
                     maxLength(Int.MAX_VALUE)
                     initial(
                         initialValues?.get(LOCATION_KEY)
-                            ?: "${player.location.blockX} ${player.location.blockY} ${player.location.blockZ} ${player.yaw.toInt()} ${player.pitch.toInt()}"
+                            ?: player.location.formatToCoordString()
                     )
                     width(400)
                 }
@@ -87,9 +91,9 @@ object CreateTeleporterDialog {
 
             input {
                 text(TARGET_LOCATION_KEY) {
-                    label { text("Zielposition") }
+                    label { text("Zielposition (X Y Z Pitch Yaw)") }
                     maxLength(Int.MAX_VALUE)
-                    initial(initialValues?.get(TARGET_LOCATION_KEY) ?: "0 100 0 90 90")
+                    initial(initialValues?.get(TARGET_LOCATION_KEY) ?: "0.00 100.00 0.00 90.00 90.00")
                     width(400)
                 }
             }
@@ -104,7 +108,7 @@ object CreateTeleporterDialog {
 
             input {
                 text(BOX_KEY) {
-                    label { text("Box (max. 10x10)") }
+                    label { text("Boundingbox (max. 10x10)") }
                     initial(initialValues?.get(BOX_KEY) ?: "3x3")
                     width(400)
                 }

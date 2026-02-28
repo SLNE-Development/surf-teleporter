@@ -18,7 +18,5 @@ interface TeleporterService {
     fun getTeleporterAt(location: Location): Teleporter?
     fun saveTeleporters()
 
-    companion object : TeleporterService by teleporterService {
-        val INSTANCE get() = teleporterService
-    }
+    companion object : TeleporterService by teleporterService
 }

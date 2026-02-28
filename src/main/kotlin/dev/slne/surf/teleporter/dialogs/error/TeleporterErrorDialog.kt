@@ -6,9 +6,10 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.base
 import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
 import dev.slne.surf.surfapi.bukkit.api.dialog.dialog
 import dev.slne.surf.surfapi.bukkit.api.dialog.type
-import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
 import dev.slne.surf.teleporter.dialogs.create.CreateTeleporterDialog
 import dev.slne.surf.teleporter.dialogs.edit.TeleporterEditDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
@@ -33,14 +34,11 @@ object TeleporterErrorDialog {
         teleporter: Teleporter? = null
     ) = dialog {
         base {
-            title {
-                primary("TELEPORTER ".toSmallCaps())
-                error("FEHLER".toSmallCaps())
-            }
+            title(DIALOG_TITLE)
 
             body {
                 plainMessage(400) {
-                    error("Fehler!", TextDecoration.BOLD)
+                    error("Es ist ein Fehler aufgetreten!", TextDecoration.BOLD, TextDecoration.UNDERLINED)
                     appendNewline(2)
 
                     error("Die folgenden Felder wurden nicht korrekt ausgefüllt:")
@@ -72,7 +70,6 @@ object TeleporterErrorDialog {
         previousValues: Map<String, String>
     ) = actionButton {
         label { spacer("Zurück") }
-        tooltip { info("Zurück zum vorherigen Dialog.") }
         action {
             playerCallback {
                 when (type) {
@@ -81,6 +78,14 @@ object TeleporterErrorDialog {
 
                     TeleporterActionType.EDIT ->
                         it.showDialog(TeleporterEditDialog.createDialog(teleporter!!))
+
+                    else -> {
+                        it.closeDialog()
+                        it.sendText {
+                            appendErrorPrefix()
+                            error("Es ist ein Fehler aufgetreten!")
+                        }
+                    }
                 }
             }
         }

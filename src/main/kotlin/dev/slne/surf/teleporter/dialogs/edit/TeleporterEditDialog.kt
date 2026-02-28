@@ -7,16 +7,19 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
 import dev.slne.surf.surfapi.bukkit.api.dialog.dialog
 import dev.slne.surf.surfapi.bukkit.api.dialog.type
 import dev.slne.surf.surfapi.bukkit.api.extensions.server
-import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
+import dev.slne.surf.teleporter.appendBullet
+import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
 import dev.slne.surf.teleporter.dialogs.error.InvalidField
 import dev.slne.surf.teleporter.dialogs.error.TeleporterActionType
 import dev.slne.surf.teleporter.dialogs.error.TeleporterErrorDialog
 import dev.slne.surf.teleporter.dialogs.error.TeleporterSuccessDialog
 import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
+import dev.slne.surf.teleporter.formatToCoordString
 import dev.slne.surf.teleporter.teleporter.Teleporter
 import dev.slne.surf.teleporter.teleporter.TeleporterService
 import io.papermc.paper.registry.data.dialog.ActionButton
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Location
 import org.bukkit.World
 
@@ -28,65 +31,67 @@ object TeleporterEditDialog {
     private const val BOX_KEY = "teleporter_box"
 
     private val locationRegex by lazy {
-        Regex("""^-?\d+(\.\d+)?\s-?\d+(\.\d+)?\s-?\d+(\.\d+)?(\s-?\d+(\.\d+)?){0,2}$""")
+        Regex("^-?\\d+(\\.\\d{1,2})?(?:\\s+-?\\d+(\\.\\d{1,2})?){4}$")
     }
     private val boxRegex by lazy { Regex("^\\d+x\\d+$") }
 
     fun createDialog(teleporter: Teleporter) = dialog {
         base {
-            title {
-                primary("TELEPORTER ".toSmallCaps())
-                primary("LISTE ".toSmallCaps())
-                success("KONFIGURIEREN ".toSmallCaps())
-                variableValue("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ} ")
-            }
+            title(DIALOG_TITLE)
 
             body {
                 plainMessage(400) {
-                    info("Du konfigurierst gerade einen Teleporter.")
+                    primary("Du konfigurierst gerade einen Teleporter.", TextDecoration.BOLD, TextDecoration.UNDERLINED)
                     appendNewline(2)
 
                     info("Folgende Welten können zur Konfiguration verwendet werden:")
                     appendNewline()
                     server.worlds.forEach { world ->
-                        spacer("- ")
+                        appendBullet()
                         variableValue(world.name)
                         appendNewline()
                     }
                     appendNewline()
 
-                    info("Im Folgenden siehst du die aktuellen Werte des Teleporters.")
+                    info("Im Folgenden siehst du die aktuellen Werte des Teleporters:")
                     appendNewline(2)
 
-                    primary("UUID: ")
+                    appendBullet()
+                    primary("UUID:")
+                    appendSpace()
                     variableValue(teleporter.uuid.toString())
                     appendNewline(2)
 
-                    spacer("- ")
-                    primary("Position: ")
-                    variableValue("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ}")
-                    primary(" in Welt ")
+                    appendBullet()
+                    primary("Startposition (X Y Z Pitch Yaw):")
+                    appendSpace()
+                    variableValue(teleporter.originLocation.formatToCoordString())
+                    appendSpace()
+                    primary("in Welt")
+                    appendSpace()
                     variableValue(teleporter.originLocation.world?.name ?: "Unbekannt")
                     appendNewline(2)
 
-                    spacer("- ")
-                    primary("TargetPosition: ")
-                    variableValue("${teleporter.targetLocation.blockX} ${teleporter.targetLocation.blockY} ${teleporter.targetLocation.blockZ}")
+                    appendBullet()
+                    primary("Zielposition (X Y Z Pitch Yaw):")
+                    appendSpace()
+                    variableValue(teleporter.targetLocation.formatToCoordString())
                     primary(" in Welt ")
                     variableValue(teleporter.targetLocation.world?.name ?: "Unbekannt")
                     appendNewline(2)
 
-                    spacer("- ")
-                    primary("Box: ")
+                    appendBullet()
+                    primary("Box:")
+                    appendSpace()
                     variableValue("${teleporter.width}x${teleporter.length}")
-                    appendNewline(2)
                 }
             }
 
             input {
                 text(LOCATION_KEY) {
                     label { text("Location") }
-                    initial("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ}")
+                    maxLength(Int.MAX_VALUE)
+                    initial(teleporter.originLocation.formatToCoordString())
                     width(400)
                 }
             }
@@ -102,7 +107,8 @@ object TeleporterEditDialog {
             input {
                 text(TARGET_LOCATION_KEY) {
                     label { text("TargetLocation") }
-                    initial("${teleporter.targetLocation.blockX} ${teleporter.targetLocation.blockY} ${teleporter.targetLocation.blockZ}")
+                    maxLength(Int.MAX_VALUE)
+                    initial(teleporter.targetLocation.formatToCoordString())
                     width(400)
                 }
             }
@@ -117,7 +123,7 @@ object TeleporterEditDialog {
 
             input {
                 text(BOX_KEY) {
-                    label { text("Box (max. 10x10)") }
+                    label { text("Boundingbox (max. 10x10)") }
                     initial("${teleporter.width}x${teleporter.length}")
                     width(400)
                 }
@@ -190,7 +196,7 @@ object TeleporterEditDialog {
 
                 TeleporterService.saveTeleporters()
 
-                player.showDialog(TeleporterSuccessDialog.createDialog(TeleporterActionType.CREATE, teleporter))
+                player.showDialog(TeleporterSuccessDialog.createDialog(TeleporterActionType.EDIT, teleporter))
             }
         }
     }

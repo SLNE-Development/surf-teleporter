@@ -2,11 +2,14 @@ package dev.slne.surf.teleporter
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.surfapi.bukkit.api.event.register
+import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
 import dev.slne.surf.teleporter.commands.teleporterCommand
 import dev.slne.surf.teleporter.listeners.PlayerInteractListener
 import dev.slne.surf.teleporter.listeners.PlayerMoveListener
 import dev.slne.surf.teleporter.teleporter.TeleporterService
+import org.bukkit.Location
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.*
 
 class PaperMain : SuspendingJavaPlugin() {
     override suspend fun onEnableAsync() {
@@ -17,6 +20,15 @@ class PaperMain : SuspendingJavaPlugin() {
         PlayerMoveListener.register()
         PlayerInteractListener.register()
     }
+}
+
+fun Location.formatToCoordString(): String {
+    return String.format(Locale.US, "%.2f %.2f %.2f %.2f %.2f", x, y, z, yaw, pitch)
+}
+
+fun SurfComponentBuilder.appendBullet() {
+    spacer("-")
+    appendSpace()
 }
 
 val plugin: PaperMain get() = JavaPlugin.getPlugin(PaperMain::class.java)

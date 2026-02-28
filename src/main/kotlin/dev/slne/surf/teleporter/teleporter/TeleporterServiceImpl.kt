@@ -1,6 +1,8 @@
 package dev.slne.surf.teleporter.teleporter
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.home.config.homes.TeleporterConfigHolder
+import dev.slne.surf.home.config.homes.teleporterConfig
 import dev.slne.surf.surfapi.core.api.util.freeze
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 import net.kyori.adventure.util.Services
@@ -15,25 +17,25 @@ class TeleporterServiceImpl : TeleporterService, Services.Fallback {
 
     override fun registerTeleporters() {
         _teleporters.clear()
-        _teleporters.addAll(TeleporterConfig.getConfig().teleporters)
+        _teleporters.addAll(teleporterConfig.teleporters)
     }
 
     override fun registerTeleporter(teleporter: Teleporter) {
         _teleporters.add(teleporter)
 
-        TeleporterConfig.getConfig().apply {
+        teleporterConfig.apply {
             teleporters.add(teleporter)
         }
-        TeleporterConfig.save()
+        TeleporterConfigHolder.save()
     }
 
     override fun unregisterTeleporter(teleporter: Teleporter) {
         _teleporters.remove(teleporter)
 
-        TeleporterConfig.getConfig().apply {
+        teleporterConfig.apply {
             teleporters.remove(teleporter)
         }
-        TeleporterConfig.save()
+        TeleporterConfigHolder.save()
     }
 
     override fun getTeleporterAt(location: Location) = teleporters.firstOrNull { teleporter ->
@@ -50,6 +52,6 @@ class TeleporterServiceImpl : TeleporterService, Services.Fallback {
     }
 
     override fun saveTeleporters() {
-        TeleporterConfig.save()
+        TeleporterConfigHolder.save()
     }
 }
