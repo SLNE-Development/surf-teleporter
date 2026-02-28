@@ -1,7 +1,7 @@
 package dev.slne.surf.teleporter.listeners
 
 import dev.slne.surf.teleporter.sound.soundService
-import dev.slne.surf.teleporter.teleporter.teleporterService
+import dev.slne.surf.teleporter.teleporter.TeleporterService
 import org.bukkit.GameMode
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -20,7 +20,7 @@ object PlayerMoveListener : Listener {
         val player = event.player
 
         if (player.gameMode == GameMode.SPECTATOR) return
-        val teleporter = teleporterService.getTeleporterAt(event.to) ?: return
+        val teleporter = TeleporterService.getTeleporterAt(event.to) ?: return
 
         val now = System.currentTimeMillis()
         val lastUse = cooldowns[player.uniqueId] ?: 0L

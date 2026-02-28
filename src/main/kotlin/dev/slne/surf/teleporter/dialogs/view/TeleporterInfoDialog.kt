@@ -13,7 +13,7 @@ import dev.slne.surf.teleporter.teleporter.Teleporter
 import io.papermc.paper.dialog.Dialog
 
 object TeleporterInfoDialog {
-    fun showDialog(teleporter: Teleporter): Dialog = dialog {
+    fun createDialog(teleporter: Teleporter): Dialog = dialog {
         base {
             title {
                 variableValue("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ}")
@@ -65,7 +65,7 @@ object TeleporterInfoDialog {
         tooltip { info("Klicke hier, um den Vorgang abzubrechen.") }
         action {
             playerCallback {
-                it.showDialog(TeleporterListDialog.showDialog())
+                it.showDialog(TeleporterListDialog.createDialog())
             }
         }
     }
@@ -75,7 +75,7 @@ object TeleporterInfoDialog {
         tooltip { info("Klicke hier, um den Teleporter zu löschen.") }
         action {
             playerCallback {
-                it.showDialog(TeleporterDeleteDialog.showDialog(teleporter))
+                it.showDialog(TeleporterDeleteDialog.createDialog(teleporter))
             }
         }
     }
@@ -96,7 +96,7 @@ object TeleporterInfoDialog {
         tooltip { info("Klicke hier, um die Einstellungen des Teleporters zu konfigurieren.") }
         action {
             playerCallback {
-                it.showDialog(TeleporterEditDialog.showDialog(teleporter))
+                it.showDialog(TeleporterEditDialog.createDialog(teleporter))
             }
         }
     }

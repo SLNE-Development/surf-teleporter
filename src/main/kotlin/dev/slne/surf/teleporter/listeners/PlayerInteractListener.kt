@@ -5,7 +5,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
 import dev.slne.surf.teleporter.permissions.Permissions
-import dev.slne.surf.teleporter.teleporter.teleporterService
+import dev.slne.surf.teleporter.teleporter.TeleporterService
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
@@ -23,17 +23,17 @@ object PlayerInteractListener : Listener {
 
         if (!player.hasPermission(Permissions.COMMAND_TELEPORTER_GENERIC)) return
 
-        val padAtBlock = teleporterService.getTeleporterAt(location)
+        val padAtBlock = TeleporterService.getTeleporterAt(location)
 
         val blockAboveLocation = location.clone().add(0.0, 1.0, 0.0)
-        val padAbove = teleporterService.getTeleporterAt(blockAboveLocation)
+        val padAbove = TeleporterService.getTeleporterAt(blockAboveLocation)
 
         val porter = padAtBlock ?: padAbove ?: return
 
         val clickable = buildText {
             text("HIER", Colors.VARIABLE_VALUE, TextDecoration.UNDERLINED)
             hoverEvent(HoverEvent.showText(buildText { info("Klicke hier, um dir das JumpPad anzusehen.") }))
-            clickEvent(ClickEvent.callback { player.showDialog(TeleporterInfoDialog.showDialog(porter)) })
+            clickEvent(ClickEvent.callback { player.showDialog(TeleporterInfoDialog.createDialog(porter)) })
         }
 
         player.sendText {

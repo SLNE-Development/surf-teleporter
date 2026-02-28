@@ -11,12 +11,12 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
 import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
 import dev.slne.surf.teleporter.dialogs.view.TeleporterListDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
-import dev.slne.surf.teleporter.teleporter.teleporterService
+import dev.slne.surf.teleporter.teleporter.TeleporterService
 import io.papermc.paper.dialog.Dialog
 import net.kyori.adventure.text.format.TextDecoration
 
 object TeleporterDeleteDialog {
-    fun showDialog(teleporter: Teleporter): Dialog = dialog {
+    fun createDialog(teleporter: Teleporter): Dialog = dialog {
         base {
             title {
                 primary("TELEPORTER ".toSmallCaps())
@@ -74,7 +74,7 @@ object TeleporterDeleteDialog {
         tooltip { info("Klicke hier, um den Vorgang abzubrechen.") }
         action {
             playerCallback {
-                it.showDialog(TeleporterInfoDialog.showDialog(teleporter))
+                it.showDialog(TeleporterInfoDialog.createDialog(teleporter))
             }
         }
     }
@@ -84,8 +84,9 @@ object TeleporterDeleteDialog {
         tooltip { info("Klicke hier, um den Teleporter zu löschen.") }
         action {
             playerCallback {
-                teleporterService.deleteTeleporter(teleporter)
-                it.showDialog(TeleporterListDialog.showDialog())
+                TeleporterService.unregisterTeleporter(teleporter)
+
+                it.showDialog(TeleporterListDialog.createDialog())
             }
         }
     }

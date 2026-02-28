@@ -9,11 +9,13 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.type
 import dev.slne.surf.surfapi.bukkit.api.extensions.server
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
-import dev.slne.surf.teleporter.dialogs.create.results.TeleportCreateSuccessDialog
-import dev.slne.surf.teleporter.dialogs.edit.result.TeleporterEditFailResultDialog
+import dev.slne.surf.teleporter.dialogs.error.InvalidField
+import dev.slne.surf.teleporter.dialogs.error.TeleporterActionType
+import dev.slne.surf.teleporter.dialogs.error.TeleporterErrorDialog
+import dev.slne.surf.teleporter.dialogs.error.TeleporterSuccessDialog
 import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
-import dev.slne.surf.teleporter.teleporter.teleporterService
+import dev.slne.surf.teleporter.teleporter.TeleporterService
 import io.papermc.paper.registry.data.dialog.ActionButton
 import org.bukkit.Location
 import org.bukkit.World
@@ -25,111 +27,113 @@ object TeleporterEditDialog {
     private const val TARGET_LOCATION_WORLD_KEY = "teleporter_target_location_world"
     private const val BOX_KEY = "teleporter_box"
 
-    private val locationRegex by lazy { Regex("^-?\\d+\\s-?\\d+\\s-?\\d+$") }
+    private val locationRegex by lazy {
+        Regex("""^-?\d+(\.\d+)?\s-?\d+(\.\d+)?\s-?\d+(\.\d+)?(\s-?\d+(\.\d+)?){0,2}$""")
+    }
     private val boxRegex by lazy { Regex("^\\d+x\\d+$") }
 
-    fun showDialog(teleporter: Teleporter) = dialog {
+    fun createDialog(teleporter: Teleporter) = dialog {
         base {
             title {
                 primary("TELEPORTER ".toSmallCaps())
                 primary("LISTE ".toSmallCaps())
                 success("KONFIGURIEREN ".toSmallCaps())
                 variableValue("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ} ")
+            }
 
-                body {
-                    plainMessage(400) {
-                        info("Du konfigurierst gerade einen Teleporter.")
-                        appendNewline(2)
+            body {
+                plainMessage(400) {
+                    info("Du konfigurierst gerade einen Teleporter.")
+                    appendNewline(2)
 
-                        info("Folgende Welten können zur Konfiguration verwendet werden:")
+                    info("Folgende Welten können zur Konfiguration verwendet werden:")
+                    appendNewline()
+                    server.worlds.forEach { world ->
+                        spacer("- ")
+                        variableValue(world.name)
                         appendNewline()
-                        server.worlds.forEach { world ->
-                            spacer("- ")
-                            variableValue(world.name)
-                            appendNewline()
-                        }
-                        appendNewline()
-
-                        info("Im Folgenden siehst du die aktuellen Werte des Teleporters.")
-                        appendNewline(2)
-
-                        primary("UUID: ")
-                        variableValue(teleporter.uuid.toString())
-                        appendNewline(2)
-
-                        spacer("- ")
-                        primary("Position: ")
-                        variableValue("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ}")
-                        primary(" in Welt ")
-                        variableValue(teleporter.originLocation.world?.name ?: "Unbekannt")
-                        appendNewline(2)
-
-                        spacer("- ")
-                        primary("TargetPosition: ")
-                        variableValue("${teleporter.targetLocation.blockX} ${teleporter.targetLocation.blockY} ${teleporter.targetLocation.blockZ}")
-                        primary(" in Welt ")
-                        variableValue(teleporter.targetLocation.world?.name ?: "Unbekannt")
-                        appendNewline(2)
-
-                        spacer("- ")
-                        primary("Box: ")
-                        variableValue("${teleporter.width}x${teleporter.length}")
-                        appendNewline(2)
                     }
-                }
-                input {
-                    text(LOCATION_KEY) {
-                        label { text("Location") }
-                        initial("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ}")
-                        width(400)
-                    }
-                }
+                    appendNewline()
 
-                input {
-                    text(LOCATION_WORLD_KEY) {
-                        label { text("Location World") }
-                        initial(teleporter.originLocation.world?.name ?: "Unbekannt")
-                        width(400)
-                    }
-                }
+                    info("Im Folgenden siehst du die aktuellen Werte des Teleporters.")
+                    appendNewline(2)
 
-                input {
-                    text(TARGET_LOCATION_KEY) {
-                        label { text("TargetLocation") }
-                        initial("${teleporter.targetLocation.blockX} ${teleporter.targetLocation.blockY} ${teleporter.targetLocation.blockZ}")
-                        width(400)
-                    }
-                }
+                    primary("UUID: ")
+                    variableValue(teleporter.uuid.toString())
+                    appendNewline(2)
 
-                input {
-                    text(TARGET_LOCATION_WORLD_KEY) {
-                        label { text("TargetLocation World") }
-                        initial(teleporter.targetLocation.world?.name ?: "Unbekannt")
-                        width(400)
-                    }
-                }
+                    spacer("- ")
+                    primary("Position: ")
+                    variableValue("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ}")
+                    primary(" in Welt ")
+                    variableValue(teleporter.originLocation.world?.name ?: "Unbekannt")
+                    appendNewline(2)
 
-                input {
-                    text(BOX_KEY) {
-                        label { text("Box (max. 10x10)") }
-                        initial("${teleporter.width}x${teleporter.length}")
-                        width(400)
-                    }
+                    spacer("- ")
+                    primary("TargetPosition: ")
+                    variableValue("${teleporter.targetLocation.blockX} ${teleporter.targetLocation.blockY} ${teleporter.targetLocation.blockZ}")
+                    primary(" in Welt ")
+                    variableValue(teleporter.targetLocation.world?.name ?: "Unbekannt")
+                    appendNewline(2)
+
+                    spacer("- ")
+                    primary("Box: ")
+                    variableValue("${teleporter.width}x${teleporter.length}")
+                    appendNewline(2)
                 }
             }
 
-            type {
-                confirmation(saveButton(teleporter), backButton(teleporter))
+            input {
+                text(LOCATION_KEY) {
+                    label { text("Location") }
+                    initial("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ}")
+                    width(400)
+                }
             }
+
+            input {
+                text(LOCATION_WORLD_KEY) {
+                    label { text("Location World") }
+                    initial(teleporter.originLocation.world?.name ?: "Unbekannt")
+                    width(400)
+                }
+            }
+
+            input {
+                text(TARGET_LOCATION_KEY) {
+                    label { text("TargetLocation") }
+                    initial("${teleporter.targetLocation.blockX} ${teleporter.targetLocation.blockY} ${teleporter.targetLocation.blockZ}")
+                    width(400)
+                }
+            }
+
+            input {
+                text(TARGET_LOCATION_WORLD_KEY) {
+                    label { text("TargetLocation World") }
+                    initial(teleporter.targetLocation.world?.name ?: "Unbekannt")
+                    width(400)
+                }
+            }
+
+            input {
+                text(BOX_KEY) {
+                    label { text("Box (max. 10x10)") }
+                    initial("${teleporter.width}x${teleporter.length}")
+                    width(400)
+                }
+            }
+        }
+
+        type {
+            confirmation(saveButton(teleporter), backButton(teleporter))
         }
     }
 
-    private fun saveButton(oldTeleporter: Teleporter): ActionButton = actionButton {
+    private fun saveButton(teleporter: Teleporter): ActionButton = actionButton {
         label { success("Änderungen speichern") }
         tooltip { info("Klicke hier, um die Änderungen zu übernehmen.") }
         action {
             customPlayerClick { content, player ->
-
                 val locationString = content.getText(LOCATION_KEY) ?: ""
                 val targetLocationString = content.getText(TARGET_LOCATION_KEY) ?: ""
                 val locationWorldName = content.getText(LOCATION_WORLD_KEY) ?: ""
@@ -145,24 +149,48 @@ object TeleporterEditDialog {
                 val originWorld = server.getWorld(locationWorldName)
                 val targetWorld = server.getWorld(targetWorldName)
 
-                if (!validLocation || !validTargetLocation || !validBox || originWorld == null || targetWorld == null || boxTooLarge) {
-                    player.showDialog(TeleporterEditFailResultDialog.showDialog(oldTeleporter))
+                val invalidFields = mutableListOf<InvalidField>()
+
+                if (!validLocation) invalidFields.add(InvalidField.START_LOCATION)
+                if (!validTargetLocation) invalidFields.add(InvalidField.TARGET_LOCATION)
+                if (!validBox) invalidFields.add(InvalidField.BOX_INVALID)
+                if (boxTooLarge) invalidFields.add(InvalidField.BOX_SIZE)
+                if (originWorld == null) invalidFields.add(InvalidField.ORIGIN_WORLD)
+                if (targetWorld == null) invalidFields.add(InvalidField.TARGET_WORLD)
+
+                if (invalidFields.isNotEmpty()) {
+                    val previousValues = mapOf(
+                        LOCATION_KEY to locationString,
+                        LOCATION_WORLD_KEY to locationWorldName,
+                        TARGET_LOCATION_KEY to targetLocationString,
+                        TARGET_LOCATION_WORLD_KEY to targetWorldName,
+                        BOX_KEY to boxString
+                    )
+
+                    player.showDialog(
+                        TeleporterErrorDialog.createDialog(
+                            TeleporterActionType.EDIT,
+                            invalidFields,
+                            previousValues,
+                            teleporter
+                        )
+                    )
                     return@customPlayerClick
                 }
 
-                val origin = parseLocation(locationString, originWorld)
-                val targetLocation = parseLocation(targetLocationString, targetWorld)
+                val origin = parseLocation(locationString, originWorld!!)
+                val targetLocation = parseLocation(targetLocationString, targetWorld!!)
 
-                val newTeleporter = Teleporter(
-                    uuid = oldTeleporter.uuid,
-                    originLocation = origin,
-                    targetLocation = targetLocation,
-                    width = width,
-                    length = length
-                )
+                teleporter.apply {
+                    this.originLocation = origin
+                    this.targetLocation = targetLocation
+                    this.width = width
+                    this.length = length
+                }
 
-                teleporterService.updateTeleporter(newTeleporter)
-                player.showDialog(TeleportCreateSuccessDialog.showDialog(newTeleporter))
+                TeleporterService.saveTeleporters()
+
+                player.showDialog(TeleporterSuccessDialog.createDialog(TeleporterActionType.CREATE, teleporter))
             }
         }
     }
@@ -172,7 +200,7 @@ object TeleporterEditDialog {
         tooltip { info("Klicke hier, um den Vorgang abzubrechen.") }
         action {
             playerCallback {
-                it.showDialog(TeleporterInfoDialog.showDialog(teleporter))
+                it.showDialog(TeleporterInfoDialog.createDialog(teleporter))
             }
         }
     }
@@ -185,10 +213,18 @@ object TeleporterEditDialog {
 
     private fun parseLocation(raw: String, world: World): Location {
         val parts = raw.trim().split(" ")
-        if (parts.size < 3) throw IllegalArgumentException("Ungültiges Location-Format: $raw")
-        val x = parts[0].toDoubleOrNull() ?: 0.0
-        val y = parts[1].toDoubleOrNull() ?: 0.0
-        val z = parts[2].toDoubleOrNull() ?: 0.0
-        return Location(world, x, y, z)
+
+        if (parts.size < 3) {
+            throw IllegalArgumentException("Ungültiges Location-Format: $raw")
+        }
+
+        val x = parts[0].toDoubleOrNull() ?: error("Ungültige X-Koordinate: ${parts[0]}")
+        val y = parts[1].toDoubleOrNull() ?: error("Ungültige Y-Koordinate: ${parts[1]}")
+        val z = parts[2].toDoubleOrNull() ?: error("Ungültige Z-Koordinate: ${parts[2]}")
+
+        val yaw = parts.getOrNull(3)?.toFloatOrNull() ?: 0f
+        val pitch = parts.getOrNull(4)?.toFloatOrNull() ?: 0f
+
+        return Location(world, x, y, z, yaw, pitch)
     }
 }

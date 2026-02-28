@@ -12,12 +12,12 @@ import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import dev.slne.surf.teleporter.dialogs.TeleporterMainDialog
 import dev.slne.surf.teleporter.dialogs.create.CreateTeleporterDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
-import dev.slne.surf.teleporter.teleporter.teleporterService
+import dev.slne.surf.teleporter.teleporter.TeleporterService
 import io.papermc.paper.dialog.Dialog
 
 object TeleporterListDialog {
-    fun showDialog(): Dialog {
-        val teleporters = teleporterService.getTeleporters()
+    fun createDialog(): Dialog {
+        val teleporters = TeleporterService.teleporters
 
         val dialogList = buildPadDialogList(teleporters)
         if (dialogList.isEmpty()) {
@@ -66,14 +66,14 @@ object TeleporterListDialog {
     }
 
     private fun buildPadDialogList(teleporters: Collection<Teleporter>) =
-        teleporters.map { TeleporterInfoDialog.showDialog(it) }.toObjectSet()
+        teleporters.map { TeleporterInfoDialog.createDialog(it) }.toObjectSet()
 
     private fun backButton() = actionButton {
         label { spacer("Zurück") }
         tooltip { info("Klicke hier, um zurück zum Hauptmenü zu gelangen.") }
         action {
             playerCallback {
-                it.showDialog(TeleporterMainDialog.showDialog())
+                it.showDialog(TeleporterMainDialog.createDialog())
             }
         }
     }
@@ -83,7 +83,7 @@ object TeleporterListDialog {
         tooltip { info("Klicke hier, um einen Teleporter zu erstellen.") }
         action {
             playerCallback {
-                it.showDialog(CreateTeleporterDialog.showDialog(it))
+                it.showDialog(CreateTeleporterDialog.createDialog(it))
             }
         }
     }
