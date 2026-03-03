@@ -7,42 +7,65 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
 import dev.slne.surf.surfapi.bukkit.api.dialog.dialog
 import dev.slne.surf.surfapi.bukkit.api.dialog.type
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickCallback
+import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.teleporter.appendBullet
+import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
 import dev.slne.surf.teleporter.dialogs.delete.TeleporterDeleteDialog
 import dev.slne.surf.teleporter.dialogs.edit.TeleporterEditDialog
+import dev.slne.surf.teleporter.formatToCoordString
 import dev.slne.surf.teleporter.teleporter.Teleporter
 import io.papermc.paper.dialog.Dialog
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.entity.Player
 
 object TeleporterInfoDialog {
-    fun showDialog(teleporter: Teleporter): Dialog = dialog {
+    fun createDialog(teleporter: Teleporter): Dialog = dialog {
         base {
             title {
-                variableValue("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ}")
+                append(DIALOG_TITLE)
+                appendSpace()
+                variableValue(teleporter.originLocation.formatToCoordString())
             }
             body {
-                plainMessage(300) {
-                    info("Im Folgenden siehst du alle aktuellen Werte des Teleporters.")
+                plainMessage(400) {
+                    primary("Du siehst dir gerade einen Teleporter an.", TextDecoration.BOLD, TextDecoration.UNDERLINED)
                     appendNewline(2)
 
-                    primary("UUID: ")
+                    appendBullet()
+                    primary("UUID:")
+                    appendSpace()
                     variableValue(teleporter.uuid.toString())
                     appendNewline(2)
 
-                    spacer("- ")
-                    primary("Position: ")
-                    variableValue("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ}")
-                    primary(" in Welt ")
+                    appendBullet()
+                    primary("Startposition:")
+                    appendSpace()
+                    variableValue(teleporter.originLocation.formatToCoordString())
+                    appendNewline(2)
+
+                    appendBullet()
+                    primary("Startwelt:")
+                    appendSpace()
                     variableValue(teleporter.originLocation.world?.name ?: "Unbekannt")
                     appendNewline(2)
 
-                    spacer("- ")
-                    primary("TargetPosition: ")
-                    variableValue("${teleporter.targetLocation.blockX} ${teleporter.targetLocation.blockY} ${teleporter.targetLocation.blockZ}")
-                    primary(" in Welt ")
+                    appendBullet()
+                    primary("Zielposition:")
+                    appendSpace()
+                    variableValue(teleporter.targetLocation.formatToCoordString())
+                    appendNewline(2)
+
+                    appendBullet()
+                    primary("Zielwelt:")
+                    appendSpace()
                     variableValue(teleporter.targetLocation.world?.name ?: "Unbekannt")
                     appendNewline(2)
 
-                    spacer("- ")
-                    primary("Box: ")
+                    appendBullet()
+                    primary("Box:")
+                    appendSpace()
                     variableValue("${teleporter.width}x${teleporter.length}")
                     appendNewline(2)
                 }
@@ -65,7 +88,7 @@ object TeleporterInfoDialog {
         tooltip { info("Klicke hier, um den Vorgang abzubrechen.") }
         action {
             playerCallback {
-                it.showDialog(TeleporterListDialog.showDialog())
+                it.showDialog(TeleporterListDialog.createDialog())
             }
         }
     }
@@ -75,7 +98,7 @@ object TeleporterInfoDialog {
         tooltip { info("Klicke hier, um den Teleporter zu löschen.") }
         action {
             playerCallback {
-                it.showDialog(TeleporterDeleteDialog.showDialog(teleporter))
+                it.showDialog(TeleporterDeleteDialog.createDialog(teleporter))
             }
         }
     }
@@ -84,9 +107,24 @@ object TeleporterInfoDialog {
         label { primary("Teleportieren") }
         tooltip { info("Klicke hier, um dich zum Teleporter zu teleportieren.") }
         action {
-            playerCallback {
-                it.teleportAsync(teleporter.originLocation)
-                it.closeDialog()
+            playerCallback { player ->
+                player.teleportAsync(teleporter.originLocation)
+                player.sendText {
+                    appendSuccessPrefix()
+                    success("Du wurdest zum Teleporter mit der UUID")
+                    appendSpace()
+                    variableValue(teleporter.uuid.toString())
+                    appendSpace()
+                    success("teleportiert!")
+                    hoverEvent(buildText {
+                        error("Klicke, um dir den Teleporter anzusehen.")
+                    })
+                    clickCallback {
+                        val clickPlayer = it as? Player ?: return@clickCallback
+                        clickPlayer.showDialog(createDialog(teleporter))
+                    }
+                }
+                player.closeDialog()
             }
         }
     }
@@ -96,7 +134,7 @@ object TeleporterInfoDialog {
         tooltip { info("Klicke hier, um die Einstellungen des Teleporters zu konfigurieren.") }
         action {
             playerCallback {
-                it.showDialog(TeleporterEditDialog.showDialog(teleporter))
+                it.showDialog(TeleporterEditDialog.createDialog(teleporter))
             }
         }
     }

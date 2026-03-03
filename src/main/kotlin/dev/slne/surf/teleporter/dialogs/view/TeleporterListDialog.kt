@@ -6,28 +6,34 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.base
 import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
 import dev.slne.surf.surfapi.bukkit.api.dialog.dialog
 import dev.slne.surf.surfapi.bukkit.api.dialog.type
-import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
+import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
 import dev.slne.surf.teleporter.dialogs.TeleporterMainDialog
 import dev.slne.surf.teleporter.dialogs.create.CreateTeleporterDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
-import dev.slne.surf.teleporter.teleporter.teleporterService
+import dev.slne.surf.teleporter.teleporter.TeleporterService
 import io.papermc.paper.dialog.Dialog
+import net.kyori.adventure.text.format.TextDecoration
 
 object TeleporterListDialog {
-    fun showDialog(): Dialog {
-        val teleporters = teleporterService.getTeleporters()
+    fun createDialog(): Dialog {
+        val teleporters = TeleporterService.teleporters
 
         val dialogList = buildPadDialogList(teleporters)
         if (dialogList.isEmpty()) {
             return dialog {
                 base {
-                    title {
-                        primary("TELEPORTER LISTE".toSmallCaps())
-                    }
+                    title(DIALOG_TITLE)
                     body {
-                        plainMessage(300) {
+                        plainMessage(400) {
+                            primary(
+                                "Du befindest dich in der Teleporter-Übersicht.",
+                                TextDecoration.BOLD,
+                                TextDecoration.UNDERLINED
+                            )
+                            appendNewline(2)
+
                             error("Es existieren aktuell keine Teleporter.")
                         }
                     }
@@ -40,16 +46,19 @@ object TeleporterListDialog {
 
         return dialog {
             base {
-                title {
-                    primary("TELEPORTER LISTE".toSmallCaps())
-                }
-
+                title(DIALOG_TITLE)
                 body {
                     plainMessage(400) {
+                        primary(
+                            "Du befindest dich in der Teleporter-Übersicht.",
+                            TextDecoration.BOLD,
+                            TextDecoration.UNDERLINED
+                        )
+                        appendNewline(2)
+
                         info("Aktuell existieren ")
                         variableValue(teleporters.size)
                         info(" Teleporter.")
-                        appendNewline(2)
                     }
                 }
             }
@@ -57,8 +66,8 @@ object TeleporterListDialog {
             type {
                 dialogList {
                     addAll(dialogList)
-                    buttonWidth(200)
-                    columns(3)
+                    buttonWidth(400)
+                    columns(1)
                     exitAction(backButton())
                 }
             }
@@ -66,14 +75,14 @@ object TeleporterListDialog {
     }
 
     private fun buildPadDialogList(teleporters: Collection<Teleporter>) =
-        teleporters.map { TeleporterInfoDialog.showDialog(it) }.toObjectSet()
+        teleporters.map { TeleporterInfoDialog.createDialog(it) }.toObjectSet()
 
     private fun backButton() = actionButton {
         label { spacer("Zurück") }
         tooltip { info("Klicke hier, um zurück zum Hauptmenü zu gelangen.") }
         action {
             playerCallback {
-                it.showDialog(TeleporterMainDialog.showDialog())
+                it.showDialog(TeleporterMainDialog.createDialog())
             }
         }
     }
@@ -83,7 +92,7 @@ object TeleporterListDialog {
         tooltip { info("Klicke hier, um einen Teleporter zu erstellen.") }
         action {
             playerCallback {
-                it.showDialog(CreateTeleporterDialog.showDialog(it))
+                it.showDialog(CreateTeleporterDialog.createDialog(it))
             }
         }
     }

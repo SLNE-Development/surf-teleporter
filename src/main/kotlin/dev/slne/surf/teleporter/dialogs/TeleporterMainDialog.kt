@@ -8,19 +8,26 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.dialog
 import dev.slne.surf.surfapi.bukkit.api.dialog.type
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.teleporter.dialogs.create.CreateTeleporterDialog
 import dev.slne.surf.teleporter.dialogs.view.TeleporterListDialog
-import dev.slne.surf.teleporter.teleporter.teleporterService
+import dev.slne.surf.teleporter.teleporter.TeleporterService
 import io.papermc.paper.registry.data.dialog.ActionButton
+import net.kyori.adventure.text.format.TextDecoration
+
+val DIALOG_TITLE = buildText { primary("TELEPORTER".toSmallCaps()) }
 
 object TeleporterMainDialog {
-    fun showDialog() = dialog {
+    fun createDialog() = dialog {
         base {
-            val teleporters = teleporterService.teleporterCount
-            title { primary("TELEPORTER".toSmallCaps()) }
+            val teleporters = TeleporterService.teleporterCount
+            title(DIALOG_TITLE)
 
             body {
                 plainMessage(400) {
+                    primary("Hauptmenü", TextDecoration.BOLD, TextDecoration.UNDERLINED)
+                    appendNewline(2)
+
                     info("Aktuell existieren ")
                     variableValue(teleporters)
                     info(" Teleporter.")
@@ -45,7 +52,7 @@ object TeleporterMainDialog {
         }
         action {
             playerCallback {
-                it.showDialog(CreateTeleporterDialog.showDialog(it))
+                it.showDialog(CreateTeleporterDialog.createDialog(it))
             }
         }
     }
@@ -57,7 +64,7 @@ object TeleporterMainDialog {
         }
         action {
             playerCallback {
-                it.showDialog(TeleporterListDialog.showDialog())
+                it.showDialog(TeleporterListDialog.createDialog())
             }
         }
     }

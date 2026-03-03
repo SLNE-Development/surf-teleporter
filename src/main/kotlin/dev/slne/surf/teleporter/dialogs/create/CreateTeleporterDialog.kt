@@ -7,14 +7,19 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
 import dev.slne.surf.surfapi.bukkit.api.dialog.dialog
 import dev.slne.surf.surfapi.bukkit.api.dialog.type
 import dev.slne.surf.surfapi.bukkit.api.extensions.server
-import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
+import dev.slne.surf.teleporter.appendBullet
+import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
 import dev.slne.surf.teleporter.dialogs.TeleporterMainDialog
-import dev.slne.surf.teleporter.dialogs.create.results.TeleportCreateSuccessDialog
-import dev.slne.surf.teleporter.dialogs.create.results.TeleportCreationFailResultDialog
-import dev.slne.surf.teleporter.teleporter.Teleporter
-import dev.slne.surf.teleporter.teleporter.teleporterService
+import dev.slne.surf.teleporter.dialogs.error.InvalidField
+import dev.slne.surf.teleporter.dialogs.error.TeleporterActionType
+import dev.slne.surf.teleporter.dialogs.error.TeleporterErrorDialog
+import dev.slne.surf.teleporter.dialogs.error.TeleporterSuccessDialog
+import dev.slne.surf.teleporter.formatToCoordString
+import dev.slne.surf.teleporter.teleporter.TeleporterService
+import dev.slne.surf.teleporter.teleporter.teleporter
 import io.papermc.paper.registry.data.dialog.ActionButton
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -27,26 +32,33 @@ object CreateTeleporterDialog {
     private const val TARGET_LOCATION_WORLD_KEY = "teleporter_target_location_world"
     private const val BOX_KEY = "teleporter_box"
 
-    private val locationRegex by lazy { Regex("^-?\\d+\\s-?\\d+\\s-?\\d+$") }
+    private val locationRegex by lazy {
+        Regex("^-?\\d+(\\.\\d{1,2})?(?:\\s+-?\\d+(\\.\\d{1,2})?){4}$")
+    }
     private val boxRegex by lazy { Regex("^\\d+x\\d+$") }
 
-    fun showDialog(player: Player) = dialog {
+    fun createDialog(
+        player: Player,
+        initialValues: Map<String, String>? = null
+    ) = dialog {
         val uuid = UUID.randomUUID()
+
         base {
-            title {
-                primary("TELEPORTER ".toSmallCaps())
-                success("ERSTELLEN".toSmallCaps())
-            }
+            title(DIALOG_TITLE)
 
             body {
                 plainMessage(400) {
-                    primary("Du bist dabei einen neuen Teleporter zu erstellen.")
+                    primary(
+                        "Du bist dabei einen neuen Teleporter zu erstellen.",
+                        TextDecoration.BOLD,
+                        TextDecoration.UNDERLINED
+                    )
                     appendNewline(2)
 
                     info("Folgende Welten können zur Erstellung verwendet werden:")
                     appendNewline()
                     server.worlds.forEach { world ->
-                        spacer("- ")
+                        appendBullet()
                         variableValue(world.name)
                         appendNewline()
                     }
@@ -59,8 +71,12 @@ object CreateTeleporterDialog {
 
             input {
                 text(LOCATION_KEY) {
-                    label { text("Startposition") }
-                    initial("${player.location.blockX} ${player.location.blockY} ${player.location.blockZ}")
+                    label { text("Startposition (X Y Z Pitch Yaw)") }
+                    maxLength(Int.MAX_VALUE)
+                    initial(
+                        initialValues?.get(LOCATION_KEY)
+                            ?: player.location.formatToCoordString()
+                    )
                     width(400)
                 }
             }
@@ -68,15 +84,16 @@ object CreateTeleporterDialog {
             input {
                 text(LOCATION_WORLD_KEY) {
                     label { text("Startwelt") }
-                    initial(player.world.name)
+                    initial(initialValues?.get(LOCATION_WORLD_KEY) ?: player.world.name)
                     width(400)
                 }
             }
 
             input {
                 text(TARGET_LOCATION_KEY) {
-                    label { text("Zielpositoin") }
-                    initial("0 100 0")
+                    label { text("Zielposition (X Y Z Pitch Yaw)") }
+                    maxLength(Int.MAX_VALUE)
+                    initial(initialValues?.get(TARGET_LOCATION_KEY) ?: "0.00 100.00 0.00 90.00 90.00")
                     width(400)
                 }
             }
@@ -84,15 +101,15 @@ object CreateTeleporterDialog {
             input {
                 text(TARGET_LOCATION_WORLD_KEY) {
                     label { text("Zielwelt") }
-                    initial(player.world.name)
+                    initial(initialValues?.get(TARGET_LOCATION_WORLD_KEY) ?: player.world.name)
                     width(400)
                 }
             }
 
             input {
                 text(BOX_KEY) {
-                    label { text("Box (max. 10x10)") }
-                    initial("3x3")
+                    label { text("Boundingbox (max. 10x10)") }
+                    initial(initialValues?.get(BOX_KEY) ?: "3x3")
                     width(400)
                 }
             }
@@ -105,12 +122,10 @@ object CreateTeleporterDialog {
 
     private fun createButton(uuid: UUID): ActionButton = actionButton {
         label { success("Teleporter erstellen") }
-        tooltip {
-            info("Klicke hier, um den Teleporter zu erstellen.")
-        }
+        tooltip { info("Klicke hier, um den Teleporter zu erstellen.") }
+
         action {
             customPlayerClick { content, player ->
-
                 val locationString = content.getText(LOCATION_KEY) ?: ""
                 val targetLocationString = content.getText(TARGET_LOCATION_KEY) ?: ""
                 val locationWorldName = content.getText(LOCATION_WORLD_KEY) ?: ""
@@ -126,36 +141,62 @@ object CreateTeleporterDialog {
                 val originWorld = server.getWorld(locationWorldName)
                 val targetWorld = server.getWorld(targetWorldName)
 
-                if (!validLocation || !validTargetLocation || !validBox || originWorld == null || targetWorld == null || boxTooLarge) {
-                    player.showDialog(TeleportCreationFailResultDialog.showDialog())
+                val invalidFields = mutableListOf<InvalidField>()
+                if (!validLocation) invalidFields.add(InvalidField.START_LOCATION)
+                if (!validTargetLocation) invalidFields.add(InvalidField.TARGET_LOCATION)
+                if (!validBox) invalidFields.add(InvalidField.BOX_INVALID)
+                if (boxTooLarge) invalidFields.add(InvalidField.BOX_SIZE)
+                if (originWorld == null) invalidFields.add(InvalidField.ORIGIN_WORLD)
+                if (targetWorld == null) invalidFields.add(InvalidField.TARGET_WORLD)
+
+                if (invalidFields.isNotEmpty()) {
+                    val previousValues = mapOf(
+                        LOCATION_KEY to locationString,
+                        LOCATION_WORLD_KEY to locationWorldName,
+                        TARGET_LOCATION_KEY to targetLocationString,
+                        TARGET_LOCATION_WORLD_KEY to targetWorldName,
+                        BOX_KEY to boxString
+                    )
+
+                    player.showDialog(
+                        TeleporterErrorDialog.createDialog(
+                            TeleporterActionType.CREATE,
+                            invalidFields,
+                            previousValues
+                        )
+                    )
                     return@customPlayerClick
                 }
 
-                val origin = parseLocation(locationString, originWorld)
-                val targetLocation = parseLocation(targetLocationString, targetWorld)
+                val origin = parseLocation(locationString, originWorld!!)
+                val targetLocation = parseLocation(targetLocationString, targetWorld!!)
 
-
-                val teleporter = Teleporter(
+                val teleporter = teleporter(
                     uuid = uuid,
                     originLocation = origin,
                     targetLocation = targetLocation,
                     width = width,
                     length = length
                 )
-                teleporterService.addTeleporter(teleporter)
-                player.showDialog(TeleportCreateSuccessDialog.showDialog(teleporter))
+
+                TeleporterService.registerTeleporter(teleporter)
+
+                player.showDialog(
+                    TeleporterSuccessDialog.createDialog(
+                        TeleporterActionType.CREATE,
+                        teleporter
+                    )
+                )
             }
         }
     }
 
     private fun backButton(): ActionButton = actionButton {
         label { spacer("Zurück") }
-        tooltip {
-            info("Klicke hier, um den Vorgang abzubrechen.")
-        }
+        tooltip { info("Klicke hier, um den Vorgang abzubrechen.") }
         action {
             playerCallback {
-                it.showDialog(TeleporterMainDialog.showDialog())
+                it.showDialog(TeleporterMainDialog.createDialog())
             }
         }
     }
@@ -168,12 +209,14 @@ object CreateTeleporterDialog {
 
     private fun parseLocation(raw: String, world: World): Location {
         val parts = raw.trim().split(" ")
-        if (parts.size < 3) {
-            throw IllegalArgumentException("Ungültiges Location-Format: $raw")
-        }
-        val x = parts[0].toDoubleOrNull() ?: 0.0
-        val y = parts[1].toDoubleOrNull() ?: 0.0
-        val z = parts[2].toDoubleOrNull() ?: 0.0
-        return Location(world, x, y, z)
+
+        val x = parts[0].toDoubleOrNull() ?: error("Ungültige X-Koordinate: ${parts[0]}")
+        val y = parts[1].toDoubleOrNull() ?: error("Ungültige Y-Koordinate: ${parts[1]}")
+        val z = parts[2].toDoubleOrNull() ?: error("Ungültige Z-Koordinate: ${parts[2]}")
+
+        val yaw = parts.getOrNull(3)?.toFloatOrNull() ?: 0f
+        val pitch = parts.getOrNull(4)?.toFloatOrNull() ?: 0f
+
+        return Location(world, x, y, z, yaw, pitch)
     }
 }

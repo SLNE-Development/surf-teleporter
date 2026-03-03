@@ -6,62 +6,74 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.base
 import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
 import dev.slne.surf.surfapi.bukkit.api.dialog.dialog
 import dev.slne.surf.surfapi.bukkit.api.dialog.type
-import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
+import dev.slne.surf.teleporter.appendBullet
+import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
+import dev.slne.surf.teleporter.dialogs.error.TeleporterActionType
+import dev.slne.surf.teleporter.dialogs.error.TeleporterSuccessDialog
 import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
-import dev.slne.surf.teleporter.dialogs.view.TeleporterListDialog
+import dev.slne.surf.teleporter.formatToCoordString
 import dev.slne.surf.teleporter.teleporter.Teleporter
-import dev.slne.surf.teleporter.teleporter.teleporterService
+import dev.slne.surf.teleporter.teleporter.TeleporterService
 import io.papermc.paper.dialog.Dialog
 import net.kyori.adventure.text.format.TextDecoration
 
 object TeleporterDeleteDialog {
-    fun showDialog(teleporter: Teleporter): Dialog = dialog {
+    fun createDialog(teleporter: Teleporter): Dialog = dialog {
         base {
-            title {
-                primary("TELEPORTER ".toSmallCaps())
-                primary("LISTE ".toSmallCaps())
-                variableValue("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ} ")
-                error("LÖSCHEN".toSmallCaps())
+            title(DIALOG_TITLE)
 
-                body {
-                    plainMessage(300) {
-                        error("Achtung!", TextDecoration.BOLD)
-                        appendNewline(2)
+            body {
+                plainMessage(400) {
+                    error(
+                        "Du bist dabei einen Teleporter unwiderruflich zu löschen!",
+                        TextDecoration.BOLD,
+                        TextDecoration.UNDERLINED
+                    )
+                    appendNewline(2)
 
-                        error("Du bist dabei einen Teleporter unwiderruflich zu löschen!")
-                        appendNewline(2)
+                    error("Bitte bestätige dein Vorhaben!")
+                    appendNewline(2)
 
-                        error("Bitte bestätige dein Vorhaben!")
-                        appendNewline(2)
+                    info("Im Folgenden siehst du die aktuellen Werte des Teleporters:")
+                    appendNewline(2)
 
-                        info("Im Folgenden siehst du die aktuellen Werte des Teleporters.")
-                        appendNewline(2)
+                    appendBullet()
+                    primary("UUID:")
+                    appendSpace()
+                    variableValue(teleporter.uuid.toString())
+                    appendNewline(2)
 
-                        primary("UUID: ")
-                        variableValue(teleporter.uuid.toString())
-                        appendNewline(2)
+                    appendBullet()
+                    primary("Startposition:")
+                    appendSpace()
+                    variableValue(teleporter.originLocation.formatToCoordString())
+                    appendNewline(2)
 
-                        spacer("- ")
-                        primary("Position: ")
-                        variableValue("${teleporter.originLocation.blockX} ${teleporter.originLocation.blockY} ${teleporter.originLocation.blockZ}")
-                        primary(" in Welt ")
-                        variableValue(teleporter.originLocation.world?.name ?: "Unbekannt")
-                        appendNewline(2)
+                    appendBullet()
+                    primary("Startwelt:")
+                    appendSpace()
+                    variableValue(teleporter.originLocation.world?.name ?: "Unbekannt")
+                    appendNewline(2)
 
-                        spacer("- ")
-                        primary("TargetPosition: ")
-                        variableValue("${teleporter.targetLocation.blockX} ${teleporter.targetLocation.blockY} ${teleporter.targetLocation.blockZ}")
-                        primary(" in Welt ")
-                        variableValue(teleporter.targetLocation.world?.name ?: "Unbekannt")
-                        appendNewline(2)
+                    appendBullet()
+                    primary("Zielposition:")
+                    appendSpace()
+                    variableValue(teleporter.targetLocation.formatToCoordString())
+                    appendNewline(2)
 
-                        spacer("- ")
-                        primary("Box: ")
-                        variableValue("${teleporter.width}x${teleporter.length}")
-                        appendNewline(2)
-                    }
+                    appendBullet()
+                    primary("Zielwelt:")
+                    appendSpace()
+                    variableValue(teleporter.targetLocation.world?.name ?: "Unbekannt")
+                    appendNewline(2)
+
+                    appendBullet()
+                    primary("Box:")
+                    appendSpace()
+                    variableValue("${teleporter.width}x${teleporter.length}")
                 }
+
             }
             type {
                 confirmation(confirmButton(teleporter), backButton(teleporter))
@@ -74,7 +86,7 @@ object TeleporterDeleteDialog {
         tooltip { info("Klicke hier, um den Vorgang abzubrechen.") }
         action {
             playerCallback {
-                it.showDialog(TeleporterInfoDialog.showDialog(teleporter))
+                it.showDialog(TeleporterInfoDialog.createDialog(teleporter))
             }
         }
     }
@@ -84,8 +96,9 @@ object TeleporterDeleteDialog {
         tooltip { info("Klicke hier, um den Teleporter zu löschen.") }
         action {
             playerCallback {
-                teleporterService.deleteTeleporter(teleporter)
-                it.showDialog(TeleporterListDialog.showDialog())
+                TeleporterService.unregisterTeleporter(teleporter)
+
+                it.showDialog(TeleporterSuccessDialog.createDialog(TeleporterActionType.DELETE, null))
             }
         }
     }
