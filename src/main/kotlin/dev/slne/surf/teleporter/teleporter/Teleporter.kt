@@ -1,5 +1,7 @@
 package dev.slne.surf.teleporter.teleporter
 
+import dev.slne.surf.teleporter.dialogs.TeleporterDialog
+import dev.slne.surf.teleporter.formatToCoordString
 import kotlinx.serialization.Transient
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -9,12 +11,14 @@ import org.spongepowered.configurate.objectmapping.meta.Setting
 import java.util.*
 
 fun teleporter(
+    name: String,
     uuid: UUID,
     originLocation: Location,
     targetLocation: Location,
     width: Int,
     length: Int
 ) = Teleporter(
+    name = name,
     uuid = uuid,
     originWorldId = originLocation.world.uid,
     originX = originLocation.x,
@@ -34,6 +38,7 @@ fun teleporter(
 
 @ConfigSerializable
 data class Teleporter(
+    val name: String,
     val uuid: UUID,
 
     @Setting("origin_world")
@@ -103,6 +108,20 @@ data class Teleporter(
             originLocation.blockY.toDouble() + 1,
             originLocation.blockZ + length / 2.0
         )
+
+    fun toInitialValues(): Map<String, String> {
+        val map = mutableMapOf<String, String>()
+
+        map[TeleporterDialog.UUID_KEY] = uuid.toString()
+        map[TeleporterDialog.NAME_KEY] = name
+        map[TeleporterDialog.LOCATION_KEY] = originLocation.formatToCoordString()
+        map[TeleporterDialog.LOCATION_WORLD_KEY] = originLocation.world.name
+        map[TeleporterDialog.TARGET_LOCATION_KEY] = targetLocation.formatToCoordString()
+        map[TeleporterDialog.TARGET_LOCATION_WORLD_KEY] = targetLocation.world.name
+        map[TeleporterDialog.BOX_KEY] = "${width}x${length}"
+
+        return map
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

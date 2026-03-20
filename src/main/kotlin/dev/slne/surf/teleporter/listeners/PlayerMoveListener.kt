@@ -1,7 +1,11 @@
 package dev.slne.surf.teleporter.listeners
 
+import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.folia.regionDispatcher
+import dev.slne.surf.teleporter.plugin
 import dev.slne.surf.teleporter.sound.soundService
 import dev.slne.surf.teleporter.teleporter.TeleporterService
+import kotlinx.coroutines.future.await
 import org.bukkit.GameMode
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -26,7 +30,11 @@ object PlayerMoveListener : Listener {
         val lastUse = cooldowns[player.uniqueId] ?: 0L
         if (now - lastUse < cooldown) return
 
-        player.teleportAsync(teleporter.targetLocation)
-        soundService.playTeleportSound(player)
+        plugin.launch(plugin.regionDispatcher(teleporter.targetLocation)) {
+            player.teleportAsync(teleporter.targetLocation).await()
+            soundService.playTeleportSound(player)
+            
+            cooldowns[player.uniqueId] = now
+        }
     }
 }

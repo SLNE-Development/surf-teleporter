@@ -10,13 +10,14 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
-import dev.slne.surf.teleporter.dialogs.create.CreateTeleporterDialog
+import dev.slne.surf.teleporter.dialogs.create.TeleporterCreateDialog
 import dev.slne.surf.teleporter.dialogs.edit.TeleporterEditDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 
 enum class InvalidField(val message: String) {
+    NAME_EMPTY("Der Name des Teleporters darf nicht leer sein."),
     START_LOCATION("Die Startposition wurde nicht korrekt angegeben."),
     TARGET_LOCATION("Die Zielposition wurde nicht korrekt angegeben."),
     BOX_SIZE("Die angegebene Box überschreitet die maximale Größe von 10x10."),
@@ -26,7 +27,6 @@ enum class InvalidField(val message: String) {
 }
 
 object TeleporterErrorDialog {
-
     fun createDialog(
         type: TeleporterActionType,
         invalidFields: List<InvalidField>,
@@ -38,7 +38,11 @@ object TeleporterErrorDialog {
 
             body {
                 plainMessage(400) {
-                    error("Es ist ein Fehler aufgetreten!", TextDecoration.BOLD, TextDecoration.UNDERLINED)
+                    error(
+                        "Es ist ein Fehler aufgetreten!",
+                        TextDecoration.BOLD,
+                        TextDecoration.UNDERLINED
+                    )
                     appendNewline(2)
 
                     error("Die folgenden Felder wurden nicht korrekt ausgefüllt:")
@@ -74,7 +78,7 @@ object TeleporterErrorDialog {
             playerCallback {
                 when (type) {
                     TeleporterActionType.CREATE ->
-                        it.showDialog(CreateTeleporterDialog.createDialog(it, previousValues))
+                        it.showDialog(TeleporterCreateDialog.createDialog(it, previousValues))
 
                     TeleporterActionType.EDIT ->
                         it.showDialog(TeleporterEditDialog.createDialog(teleporter!!))

@@ -10,7 +10,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
 import dev.slne.surf.teleporter.dialogs.TeleporterMainDialog
-import dev.slne.surf.teleporter.dialogs.create.CreateTeleporterDialog
+import dev.slne.surf.teleporter.dialogs.create.TeleporterCreateDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
 import dev.slne.surf.teleporter.teleporter.TeleporterService
 import io.papermc.paper.dialog.Dialog
@@ -92,7 +92,7 @@ object TeleporterListDialog {
         tooltip { info("Klicke hier, um einen Teleporter zu erstellen.") }
         action {
             playerCallback {
-                it.showDialog(CreateTeleporterDialog.createDialog(it))
+                it.showDialog(TeleporterCreateDialog.createDialog(it))
             }
         }
     }

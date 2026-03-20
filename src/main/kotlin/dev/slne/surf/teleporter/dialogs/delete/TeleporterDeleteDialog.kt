@@ -7,12 +7,11 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
 import dev.slne.surf.surfapi.bukkit.api.dialog.dialog
 import dev.slne.surf.surfapi.bukkit.api.dialog.type
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
-import dev.slne.surf.teleporter.appendBullet
 import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
+import dev.slne.surf.teleporter.dialogs.TeleporterDialog
 import dev.slne.surf.teleporter.dialogs.error.TeleporterActionType
 import dev.slne.surf.teleporter.dialogs.error.TeleporterSuccessDialog
 import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
-import dev.slne.surf.teleporter.formatToCoordString
 import dev.slne.surf.teleporter.teleporter.Teleporter
 import dev.slne.surf.teleporter.teleporter.TeleporterService
 import io.papermc.paper.dialog.Dialog
@@ -35,43 +34,9 @@ object TeleporterDeleteDialog {
                     error("Bitte bestätige dein Vorhaben!")
                     appendNewline(2)
 
-                    info("Im Folgenden siehst du die aktuellen Werte des Teleporters:")
-                    appendNewline(2)
-
-                    appendBullet()
-                    primary("UUID:")
-                    appendSpace()
-                    variableValue(teleporter.uuid.toString())
-                    appendNewline(2)
-
-                    appendBullet()
-                    primary("Startposition:")
-                    appendSpace()
-                    variableValue(teleporter.originLocation.formatToCoordString())
-                    appendNewline(2)
-
-                    appendBullet()
-                    primary("Startwelt:")
-                    appendSpace()
-                    variableValue(teleporter.originLocation.world?.name ?: "Unbekannt")
-                    appendNewline(2)
-
-                    appendBullet()
-                    primary("Zielposition:")
-                    appendSpace()
-                    variableValue(teleporter.targetLocation.formatToCoordString())
-                    appendNewline(2)
-
-                    appendBullet()
-                    primary("Zielwelt:")
-                    appendSpace()
-                    variableValue(teleporter.targetLocation.world?.name ?: "Unbekannt")
-                    appendNewline(2)
-
-                    appendBullet()
-                    primary("Box:")
-                    appendSpace()
-                    variableValue("${teleporter.width}x${teleporter.length}")
+                    TeleporterDialog.run {
+                        appendTeleporterInformation(teleporter.toInitialValues())
+                    }
                 }
 
             }
@@ -98,7 +63,12 @@ object TeleporterDeleteDialog {
             playerCallback {
                 TeleporterService.unregisterTeleporter(teleporter)
 
-                it.showDialog(TeleporterSuccessDialog.createDialog(TeleporterActionType.DELETE, null))
+                it.showDialog(
+                    TeleporterSuccessDialog.createDialog(
+                        TeleporterActionType.DELETE,
+                        null
+                    )
+                )
             }
         }
     }
