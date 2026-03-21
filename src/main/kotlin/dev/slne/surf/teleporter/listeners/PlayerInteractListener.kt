@@ -3,7 +3,7 @@ package dev.slne.surf.teleporter.listeners
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
+import dev.slne.surf.teleporter.dialogs.crud.view.TeleporterInfoDialog
 import dev.slne.surf.teleporter.permissions.Permissions
 import dev.slne.surf.teleporter.teleporter.TeleporterService
 import net.kyori.adventure.text.event.ClickEvent
@@ -33,7 +33,13 @@ object PlayerInteractListener : Listener {
         val clickable = buildText {
             text("HIER", Colors.VARIABLE_VALUE, TextDecoration.UNDERLINED)
             hoverEvent(HoverEvent.showText(buildText { info("Klicke hier, um dir das JumpPad anzusehen.") }))
-            clickEvent(ClickEvent.callback { player.showDialog(TeleporterInfoDialog.createDialog(porter)) })
+            clickEvent(ClickEvent.callback {
+                player.showDialog(
+                    TeleporterInfoDialog.createDialog(
+                        porter
+                    )
+                )
+            })
         }
 
         player.sendText {

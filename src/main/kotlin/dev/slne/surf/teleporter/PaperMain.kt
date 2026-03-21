@@ -7,9 +7,7 @@ import dev.slne.surf.teleporter.commands.teleporterCommand
 import dev.slne.surf.teleporter.listeners.PlayerInteractListener
 import dev.slne.surf.teleporter.listeners.PlayerMoveListener
 import dev.slne.surf.teleporter.teleporter.TeleporterService
-import org.bukkit.Location
 import org.bukkit.plugin.java.JavaPlugin
-import java.util.*
 
 class PaperMain : SuspendingJavaPlugin() {
     override suspend fun onEnableAsync() {
@@ -20,10 +18,6 @@ class PaperMain : SuspendingJavaPlugin() {
         PlayerMoveListener.register()
         PlayerInteractListener.register()
     }
-}
-
-fun Location.formatToCoordString(): String {
-    return String.format(Locale.US, "%.2f %.2f %.2f %.2f %.2f", x, y, z, yaw, pitch)
 }
 
 fun SurfComponentBuilder.appendBullet() {

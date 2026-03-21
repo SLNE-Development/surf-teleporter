@@ -2,17 +2,26 @@ package dev.slne.surf.teleporter.commands.subcommands
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.anyExecutor
+import dev.jorel.commandapi.kotlindsl.booleanArgument
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.home.config.homes.TeleporterConfigHolder
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.teleporter.config.TeleporterConfig
 import dev.slne.surf.teleporter.permissions.Permissions
 import dev.slne.surf.teleporter.teleporter.TeleporterService
 
 fun CommandAPICommand.teleporterReloadCommand() = subcommand("reload") {
     withPermission(Permissions.COMMAND_TELEPORTER_RELOAD)
 
-    anyExecutor { sender, _ ->
-        TeleporterConfigHolder.reload()
+    booleanArgument("saveBeforeReload", optional = true)
+
+    anyExecutor { sender, arguments ->
+        val saveBeforeReload = arguments.getOrDefaultUnchecked("saveBeforeReload", false)
+
+        if (saveBeforeReload) {
+            TeleporterService.saveTeleporters()
+        }
+
+        TeleporterConfig.reloadFromFile()
         TeleporterService.registerTeleporters()
 
         sender.sendText {

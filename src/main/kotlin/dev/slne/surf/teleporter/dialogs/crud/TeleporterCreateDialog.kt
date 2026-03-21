@@ -1,39 +1,46 @@
-@file:Suppress("UnstableApiUsage")
-
-package dev.slne.surf.teleporter.dialogs.edit
+package dev.slne.surf.teleporter.dialogs.crud
 
 import dev.slne.surf.teleporter.dialogs.TeleporterDialog
+import dev.slne.surf.teleporter.dialogs.TeleporterMainDialog
 import dev.slne.surf.teleporter.dialogs.error.TeleporterActionType
-import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.entity.Player
+import java.util.*
 
-object TeleporterEditDialog {
+object TeleporterCreateDialog {
     fun createDialog(
         player: Player,
-        teleporter: Teleporter
+        teleporter: Teleporter? = null
     ) = TeleporterDialog.create(
-        player = player,
-        initialValues = teleporter.toInitialValues(),
+        teleporter = teleporter ?: Teleporter(
+            uuid = UUID.randomUUID(),
+            name = player.name,
+            originLocation = player.location,
+            targetLocation = player.location,
+            width = 3.0,
+            length = 3.0,
+            height = 3.0
+        ),
         dialogHeader = {
             primary(
-                "Du konfigurierst gerade einen Teleporter.",
+                "Du erstellst gerade einen neuen Teleporter.",
                 TextDecoration.BOLD,
                 TextDecoration.UNDERLINED
             )
         }
-    ) {
+    ) { teleporter ->
         yes {
-            label { success("Änderungen speichern") }
-            tooltip { info("Klicke hier, um die Änderungen zu übernehmen.") }
+            label { success("Teleporter erstellen") }
+            tooltip { info("Klicke hier, um den Teleporter zu erstellen.") }
+
             action {
                 customPlayerClick { content, player ->
                     TeleporterDialog.handleConfirmation(
-                        player = player,
-                        content = content,
-                        actionType = TeleporterActionType.EDIT,
-                        teleporter = teleporter
+                        player,
+                        content,
+                        TeleporterActionType.CREATE,
+                        teleporter
                     )
                 }
             }
@@ -44,7 +51,7 @@ object TeleporterEditDialog {
             tooltip { info("Klicke hier, um den Vorgang abzubrechen.") }
             action {
                 playerCallback {
-                    it.showDialog(TeleporterInfoDialog.createDialog(teleporter))
+                    it.showDialog(TeleporterMainDialog.createDialog())
                 }
             }
         }

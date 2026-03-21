@@ -9,8 +9,8 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.type
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.teleporter.dialogs.create.TeleporterCreateDialog
-import dev.slne.surf.teleporter.dialogs.view.TeleporterListDialog
+import dev.slne.surf.teleporter.dialogs.crud.TeleporterCreateDialog
+import dev.slne.surf.teleporter.dialogs.crud.view.TeleporterListDialog
 import dev.slne.surf.teleporter.teleporter.TeleporterService
 import io.papermc.paper.registry.data.dialog.ActionButton
 import net.kyori.adventure.text.format.TextDecoration

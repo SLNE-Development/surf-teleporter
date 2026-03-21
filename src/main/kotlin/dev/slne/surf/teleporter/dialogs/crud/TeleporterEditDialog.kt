@@ -1,38 +1,34 @@
-@file:Suppress("UnstableApiUsage")
-
-package dev.slne.surf.teleporter.dialogs.create
+package dev.slne.surf.teleporter.dialogs.crud
 
 import dev.slne.surf.teleporter.dialogs.TeleporterDialog
-import dev.slne.surf.teleporter.dialogs.TeleporterMainDialog
+import dev.slne.surf.teleporter.dialogs.crud.view.TeleporterInfoDialog
 import dev.slne.surf.teleporter.dialogs.error.TeleporterActionType
+import dev.slne.surf.teleporter.teleporter.Teleporter
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.entity.Player
 
-object TeleporterCreateDialog {
+object TeleporterEditDialog {
     fun createDialog(
-        player: Player,
+        teleporter: Teleporter
     ) = TeleporterDialog.create(
-        player = player,
-        initialValues = mapOf(),
+        teleporter = teleporter,
         dialogHeader = {
             primary(
-                "Du erstellst gerade einen neuen Teleporter.",
+                "Du konfigurierst gerade einen Teleporter.",
                 TextDecoration.BOLD,
                 TextDecoration.UNDERLINED
             )
         }
     ) {
         yes {
-            label { success("Teleporter erstellen") }
-            tooltip { info("Klicke hier, um den Teleporter zu erstellen.") }
-
+            label { success("Änderungen speichern") }
+            tooltip { info("Klicke hier, um die Änderungen zu übernehmen.") }
             action {
                 customPlayerClick { content, player ->
                     TeleporterDialog.handleConfirmation(
-                        player,
-                        content,
-                        TeleporterActionType.CREATE,
-                        null
+                        player = player,
+                        content = content,
+                        actionType = TeleporterActionType.EDIT,
+                        teleporter = teleporter
                     )
                 }
             }
@@ -43,7 +39,7 @@ object TeleporterCreateDialog {
             tooltip { info("Klicke hier, um den Vorgang abzubrechen.") }
             action {
                 playerCallback {
-                    it.showDialog(TeleporterMainDialog.createDialog())
+                    it.showDialog(TeleporterInfoDialog.createDialog(teleporter))
                 }
             }
         }

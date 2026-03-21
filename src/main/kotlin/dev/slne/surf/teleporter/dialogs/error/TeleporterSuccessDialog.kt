@@ -10,8 +10,8 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
 import dev.slne.surf.teleporter.appendBullet
 import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
 import dev.slne.surf.teleporter.dialogs.TeleporterMainDialog
-import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
-import dev.slne.surf.teleporter.dialogs.view.TeleporterListDialog
+import dev.slne.surf.teleporter.dialogs.crud.view.TeleporterInfoDialog
+import dev.slne.surf.teleporter.dialogs.crud.view.TeleporterListDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
 import io.papermc.paper.registry.data.dialog.ActionButton
 import net.kyori.adventure.text.format.TextDecoration

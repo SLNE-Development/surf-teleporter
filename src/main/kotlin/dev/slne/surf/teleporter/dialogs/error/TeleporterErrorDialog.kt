@@ -10,28 +10,18 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
-import dev.slne.surf.teleporter.dialogs.create.TeleporterCreateDialog
-import dev.slne.surf.teleporter.dialogs.edit.TeleporterEditDialog
+import dev.slne.surf.teleporter.dialogs.crud.TeleporterCreateDialog
+import dev.slne.surf.teleporter.dialogs.crud.TeleporterEditDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
+import dev.slne.surf.teleporter.teleporter.field.TeleporterFieldParseResult
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
-
-enum class InvalidField(val message: String) {
-    NAME_EMPTY("Der Name des Teleporters darf nicht leer sein."),
-    START_LOCATION("Die Startposition wurde nicht korrekt angegeben."),
-    TARGET_LOCATION("Die Zielposition wurde nicht korrekt angegeben."),
-    BOX_SIZE("Die angegebene Box überschreitet die maximale Größe von 10x10."),
-    BOX_INVALID("Das Format der Box ist ungültig. Verwende z. B. 3x3."),
-    ORIGIN_WORLD("Die angegebene Startwelt existiert nicht."),
-    TARGET_WORLD("Die angegebene Zielwelt existiert nicht.")
-}
 
 object TeleporterErrorDialog {
     fun createDialog(
         type: TeleporterActionType,
-        invalidFields: List<InvalidField>,
-        previousValues: Map<String, String>,
-        teleporter: Teleporter? = null
+        invalidFields: List<TeleporterFieldParseResult>,
+        teleporter: Teleporter,
     ) = dialog {
         base {
             title(DIALOG_TITLE)
@@ -45,7 +35,7 @@ object TeleporterErrorDialog {
                     )
                     appendNewline(2)
 
-                    error("Die folgenden Felder wurden nicht korrekt ausgefüllt:")
+                    error("Es sind folgende Fehler aufgetreten:")
                     appendNewline(2)
 
                     appendCollectionNewLine(
@@ -53,7 +43,7 @@ object TeleporterErrorDialog {
                         linePrefix = Component.empty()
                     ) { field ->
                         buildText {
-                            variableValue(field.message)
+                            append(field)
                         }
                     }
 
@@ -64,24 +54,23 @@ object TeleporterErrorDialog {
         }
 
         type {
-            notice(backButton(type, teleporter, previousValues))
+            notice(backButton(type, teleporter))
         }
     }
 
     private fun backButton(
         type: TeleporterActionType,
-        teleporter: Teleporter?,
-        previousValues: Map<String, String>
+        teleporter: Teleporter,
     ) = actionButton {
         label { spacer("Zurück") }
         action {
             playerCallback {
                 when (type) {
                     TeleporterActionType.CREATE ->
-                        it.showDialog(TeleporterCreateDialog.createDialog(it, previousValues))
+                        it.showDialog(TeleporterCreateDialog.createDialog(it, teleporter))
 
                     TeleporterActionType.EDIT ->
-                        it.showDialog(TeleporterEditDialog.createDialog(teleporter!!))
+                        it.showDialog(TeleporterEditDialog.createDialog(teleporter))
 
                     else -> {
                         it.closeDialog()

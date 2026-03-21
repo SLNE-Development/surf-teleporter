@@ -9,8 +9,8 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.teleporter.commands.subcommands.teleporterReloadCommand
 import dev.slne.surf.teleporter.dialogs.TeleporterMainDialog
-import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
-import dev.slne.surf.teleporter.dialogs.view.TeleporterListDialog
+import dev.slne.surf.teleporter.dialogs.crud.view.TeleporterInfoDialog
+import dev.slne.surf.teleporter.dialogs.crud.view.TeleporterListDialog
 import dev.slne.surf.teleporter.permissions.Permissions
 import dev.slne.surf.teleporter.teleporter.TeleporterService
 import net.kyori.adventure.text.event.ClickEvent
@@ -30,7 +30,8 @@ fun teleporterCommand() = commandAPICommand("teleporter") {
             return@playerExecutor
         }
         val teleporterAtBlock = TeleporterService.getTeleporterAt(teleporterLocation)
-        val teleporterAbove = TeleporterService.getTeleporterAt(teleporterLocation.clone().add(0.0, 1.0, 0.0))
+        val teleporterAbove =
+            TeleporterService.getTeleporterAt(teleporterLocation.clone().add(0.0, 1.0, 0.0))
         val teleporter = teleporterAtBlock ?: teleporterAbove
 
         if (teleporter == null) {

@@ -1,6 +1,4 @@
-@file:Suppress("UnstableApiUsage")
-
-package dev.slne.surf.teleporter.dialogs.delete
+package dev.slne.surf.teleporter.dialogs.crud
 
 import dev.slne.surf.surfapi.bukkit.api.dialog.base
 import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
@@ -9,9 +7,9 @@ import dev.slne.surf.surfapi.bukkit.api.dialog.type
 import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
 import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
 import dev.slne.surf.teleporter.dialogs.TeleporterDialog
+import dev.slne.surf.teleporter.dialogs.crud.view.TeleporterInfoDialog
 import dev.slne.surf.teleporter.dialogs.error.TeleporterActionType
 import dev.slne.surf.teleporter.dialogs.error.TeleporterSuccessDialog
-import dev.slne.surf.teleporter.dialogs.view.TeleporterInfoDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
 import dev.slne.surf.teleporter.teleporter.TeleporterService
 import io.papermc.paper.dialog.Dialog
@@ -35,7 +33,7 @@ object TeleporterDeleteDialog {
                     appendNewline(2)
 
                     TeleporterDialog.run {
-                        appendTeleporterInformation(teleporter.toInitialValues())
+                        appendTeleporterInformation(teleporter)
                     }
                 }
 
@@ -61,7 +59,7 @@ object TeleporterDeleteDialog {
         tooltip { info("Klicke hier, um den Teleporter zu löschen.") }
         action {
             playerCallback {
-                TeleporterService.unregisterTeleporter(teleporter)
+                TeleporterService.Companion.unregisterTeleporter(teleporter)
 
                 it.showDialog(
                     TeleporterSuccessDialog.createDialog(

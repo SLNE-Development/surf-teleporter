@@ -1,6 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
-package dev.slne.surf.teleporter.dialogs.view
+package dev.slne.surf.teleporter.dialogs.crud.view
 
 import dev.slne.surf.surfapi.bukkit.api.dialog.base
 import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
@@ -10,7 +10,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
 import dev.slne.surf.teleporter.dialogs.TeleporterMainDialog
-import dev.slne.surf.teleporter.dialogs.create.TeleporterCreateDialog
+import dev.slne.surf.teleporter.dialogs.crud.TeleporterCreateDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
 import dev.slne.surf.teleporter.teleporter.TeleporterService
 import io.papermc.paper.dialog.Dialog

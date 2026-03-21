@@ -1,6 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
-package dev.slne.surf.teleporter.dialogs.view
+package dev.slne.surf.teleporter.dialogs.crud.view
 
 import dev.slne.surf.surfapi.bukkit.api.dialog.base
 import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
@@ -10,11 +10,10 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickCallback
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.teleporter.appendBullet
 import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
-import dev.slne.surf.teleporter.dialogs.delete.TeleporterDeleteDialog
-import dev.slne.surf.teleporter.dialogs.edit.TeleporterEditDialog
-import dev.slne.surf.teleporter.formatToCoordString
+import dev.slne.surf.teleporter.dialogs.TeleporterDialog
+import dev.slne.surf.teleporter.dialogs.crud.TeleporterDeleteDialog
+import dev.slne.surf.teleporter.dialogs.crud.TeleporterEditDialog
 import dev.slne.surf.teleporter.teleporter.Teleporter
 import io.papermc.paper.dialog.Dialog
 import net.kyori.adventure.text.format.TextDecoration
@@ -26,48 +25,21 @@ object TeleporterInfoDialog {
             title {
                 append(DIALOG_TITLE)
                 appendSpace()
-                variableValue(teleporter.originLocation.formatToCoordString())
+                variableValue(teleporter.name)
             }
             body {
                 plainMessage(400) {
-                    primary("Du siehst dir gerade einen Teleporter an.", TextDecoration.BOLD, TextDecoration.UNDERLINED)
+                    primary(
+                        "Du siehst dir gerade einen Teleporter an.",
+                        TextDecoration.BOLD,
+                        TextDecoration.UNDERLINED
+                    )
                     appendNewline(2)
 
-                    appendBullet()
-                    primary("UUID:")
-                    appendSpace()
-                    variableValue(teleporter.uuid.toString())
-                    appendNewline(2)
 
-                    appendBullet()
-                    primary("Startposition:")
-                    appendSpace()
-                    variableValue(teleporter.originLocation.formatToCoordString())
-                    appendNewline(2)
-
-                    appendBullet()
-                    primary("Startwelt:")
-                    appendSpace()
-                    variableValue(teleporter.originLocation.world?.name ?: "Unbekannt")
-                    appendNewline(2)
-
-                    appendBullet()
-                    primary("Zielposition:")
-                    appendSpace()
-                    variableValue(teleporter.targetLocation.formatToCoordString())
-                    appendNewline(2)
-
-                    appendBullet()
-                    primary("Zielwelt:")
-                    appendSpace()
-                    variableValue(teleporter.targetLocation.world?.name ?: "Unbekannt")
-                    appendNewline(2)
-
-                    appendBullet()
-                    primary("Box:")
-                    appendSpace()
-                    variableValue("${teleporter.width}x${teleporter.length}")
-                    appendNewline(2)
+                    TeleporterDialog.run {
+                        appendTeleporterInformation(teleporter)
+                    }
                 }
             }
         }
@@ -111,9 +83,9 @@ object TeleporterInfoDialog {
                 player.teleportAsync(teleporter.originLocation)
                 player.sendText {
                     appendSuccessPrefix()
-                    success("Du wurdest zum Teleporter mit der UUID")
+                    success("Du wurdest zum Teleporter ")
                     appendSpace()
-                    variableValue(teleporter.uuid.toString())
+                    variableValue(teleporter.name)
                     appendSpace()
                     success("teleportiert!")
                     hoverEvent(buildText {

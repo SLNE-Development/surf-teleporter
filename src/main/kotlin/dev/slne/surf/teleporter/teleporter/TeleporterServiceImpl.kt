@@ -1,10 +1,9 @@
 package dev.slne.surf.teleporter.teleporter
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.home.config.homes.TeleporterConfigHolder
-import dev.slne.surf.home.config.homes.teleporterConfig
 import dev.slne.surf.surfapi.core.api.util.freeze
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
+import dev.slne.surf.teleporter.config.TeleporterConfig
 import net.kyori.adventure.util.Services
 import org.bukkit.Location
 
@@ -17,25 +16,19 @@ class TeleporterServiceImpl : TeleporterService, Services.Fallback {
 
     override fun registerTeleporters() {
         _teleporters.clear()
-        _teleporters.addAll(teleporterConfig.teleporters)
+        _teleporters.addAll(TeleporterConfig.getConfig().teleporters.map { it.toApi() })
     }
 
     override fun registerTeleporter(teleporter: Teleporter) {
         _teleporters.add(teleporter)
 
-        teleporterConfig.apply {
-            teleporters.add(teleporter)
-        }
-        TeleporterConfigHolder.save()
+        saveTeleporters()
     }
 
     override fun unregisterTeleporter(teleporter: Teleporter) {
         _teleporters.remove(teleporter)
 
-        teleporterConfig.apply {
-            teleporters.remove(teleporter)
-        }
-        TeleporterConfigHolder.save()
+        saveTeleporters()
     }
 
     override fun getTeleporterAt(location: Location) = teleporters.firstOrNull { teleporter ->
@@ -52,6 +45,11 @@ class TeleporterServiceImpl : TeleporterService, Services.Fallback {
     }
 
     override fun saveTeleporters() {
-        TeleporterConfigHolder.save()
+        val config = TeleporterConfig.getConfig()
+
+        config.teleporters.clear()
+        config.teleporters.addAll(teleporters.map { TeleporterDto.fromApi(it) })
+
+        TeleporterConfig.save()
     }
 }
