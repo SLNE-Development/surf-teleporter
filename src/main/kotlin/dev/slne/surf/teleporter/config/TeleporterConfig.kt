@@ -1,6 +1,6 @@
 package dev.slne.surf.teleporter.config
 
-import dev.slne.surf.surfapi.core.api.config.SpongeYmlConfigClass
+import dev.slne.surf.api.core.config.SpongeYmlConfigClass
 import dev.slne.surf.teleporter.plugin
 import dev.slne.surf.teleporter.teleporter.TeleporterDto
 import org.spongepowered.configurate.objectmapping.ConfigSerializable

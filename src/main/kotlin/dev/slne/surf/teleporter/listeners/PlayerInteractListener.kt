@@ -1,8 +1,8 @@
 package dev.slne.surf.teleporter.listeners
 
-import dev.slne.surf.surfapi.core.api.messages.Colors
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.api.core.messages.Colors
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.teleporter.dialogs.crud.view.TeleporterInfoDialog
 import dev.slne.surf.teleporter.permissions.Permissions
 import dev.slne.surf.teleporter.teleporter.TeleporterService

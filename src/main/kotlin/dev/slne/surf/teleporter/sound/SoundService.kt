@@ -1,9 +1,9 @@
 package dev.slne.surf.teleporter.sound
 
-import dev.slne.surf.surfapi.core.api.messages.adventure.playSound
+import dev.slne.surf.api.core.messages.adventure.playSound
+import org.bukkit.entity.Player
 import net.kyori.adventure.sound.Sound as AdventureSound
 import org.bukkit.Sound as BukkitSound
-import org.bukkit.entity.Player
 
 val soundService = SoundService
 

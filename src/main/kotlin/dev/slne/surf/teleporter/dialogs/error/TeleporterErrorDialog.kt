@@ -2,13 +2,13 @@
 
 package dev.slne.surf.teleporter.dialogs.error
 
-import dev.slne.surf.surfapi.bukkit.api.dialog.base
-import dev.slne.surf.surfapi.bukkit.api.dialog.builder.actionButton
-import dev.slne.surf.surfapi.bukkit.api.dialog.dialog
-import dev.slne.surf.surfapi.bukkit.api.dialog.type
-import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.api.core.messages.adventure.appendNewline
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.paper.dialog.base
+import dev.slne.surf.api.paper.dialog.builder.actionButton
+import dev.slne.surf.api.paper.dialog.dialog
+import dev.slne.surf.api.paper.dialog.type
 import dev.slne.surf.teleporter.dialogs.DIALOG_TITLE
 import dev.slne.surf.teleporter.dialogs.crud.TeleporterCreateDialog
 import dev.slne.surf.teleporter.dialogs.crud.TeleporterEditDialog

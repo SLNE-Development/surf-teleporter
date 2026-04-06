@@ -1,8 +1,8 @@
 package dev.slne.surf.teleporter.teleporter
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.surfapi.core.api.util.freeze
-import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
+import dev.slne.surf.api.core.util.freeze
+import dev.slne.surf.api.core.util.mutableObjectListOf
 import dev.slne.surf.teleporter.config.TeleporterConfig
 import net.kyori.adventure.util.Services
 import org.bukkit.Location

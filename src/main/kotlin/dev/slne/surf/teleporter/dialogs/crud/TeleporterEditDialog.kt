@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package dev.slne.surf.teleporter.dialogs.crud
 
 import dev.slne.surf.teleporter.dialogs.TeleporterDialog

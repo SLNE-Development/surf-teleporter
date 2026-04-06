@@ -2,10 +2,10 @@
 
 package dev.slne.surf.teleporter.teleporter.field
 
-import dev.slne.surf.surfapi.bukkit.api.dialog.builder.DialogBaseBuilder
-import dev.slne.surf.surfapi.core.api.messages.adventure.text
-import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
+import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
+import dev.slne.surf.api.paper.dialog.builder.DialogBaseBuilder
 import io.papermc.paper.dialog.DialogResponseView
+import net.kyori.adventure.text.Component.text
 
 interface TeleporterField<T> {
     val fieldName: String

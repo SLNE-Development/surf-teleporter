@@ -1,6 +1,6 @@
 package dev.slne.surf.teleporter.teleporter.field.fields
 
-import dev.slne.surf.surfapi.bukkit.api.extensions.server
+import dev.slne.surf.api.paper.extensions.server
 import dev.slne.surf.teleporter.teleporter.field.TeleporterField
 import dev.slne.surf.teleporter.teleporter.field.TeleporterFieldParseResult
 import org.bukkit.Location

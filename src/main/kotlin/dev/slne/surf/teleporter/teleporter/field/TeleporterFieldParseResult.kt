@@ -1,6 +1,6 @@
 package dev.slne.surf.teleporter.teleporter.field
 
-import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
+import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import net.kyori.adventure.text.ComponentLike
 
 abstract class TeleporterFieldParseResult(

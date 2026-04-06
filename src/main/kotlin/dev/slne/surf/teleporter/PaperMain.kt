@@ -1,8 +1,8 @@
 package dev.slne.surf.teleporter
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
-import dev.slne.surf.surfapi.bukkit.api.event.register
-import dev.slne.surf.surfapi.core.api.messages.builder.SurfComponentBuilder
+import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
+import dev.slne.surf.api.paper.event.register
 import dev.slne.surf.teleporter.commands.teleporterCommand
 import dev.slne.surf.teleporter.listeners.PlayerInteractListener
 import dev.slne.surf.teleporter.listeners.PlayerMoveListener

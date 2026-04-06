@@ -1,6 +1,6 @@
 package dev.slne.surf.teleporter.teleporter
 
-import dev.slne.surf.surfapi.core.api.util.requiredService
+import dev.slne.surf.api.core.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
 import org.bukkit.Location
 import org.jetbrains.annotations.Unmodifiable

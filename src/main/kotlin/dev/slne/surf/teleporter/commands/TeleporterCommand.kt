@@ -4,9 +4,9 @@ import dev.jorel.commandapi.arguments.LocationType
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.locationArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.surfapi.core.api.messages.Colors
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.api.core.messages.Colors
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.teleporter.commands.subcommands.teleporterReloadCommand
 import dev.slne.surf.teleporter.dialogs.TeleporterMainDialog
 import dev.slne.surf.teleporter.dialogs.crud.view.TeleporterInfoDialog
