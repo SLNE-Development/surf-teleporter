@@ -4,3 +4,14 @@ pluginManagement {
         maven("https://reposilite.slne.dev/public/") { name = "public" }
     }
 }
+
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+    id("dev.slne.surf.api.gradle.settings") version "+"
+}
+
+rootProject.name = "surf-teleporter"
+
+include("surf-teleporter-core-client")
+include("surf-teleporter-paper")
+include("surf-teleporter-minestom")
