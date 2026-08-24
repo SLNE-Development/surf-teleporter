@@ -23,13 +23,16 @@ object PlayerMoveListener : Listener {
         val player = event.player
 
         if (player.gameMode == GameMode.SPECTATOR) return
+        if (TeleporterService.teleporterCount == 0) return
+
         val position = event.to.toTeleporterPosition() ?: return
         val teleporter = TeleporterService.getTeleporterAt(position) ?: return
 
-        val use = TeleporterCooldownService.startUse(player.uniqueId) ?: return
+        val playerUuid = player.uniqueId
+        val use = TeleporterCooldownService.startUse(playerUuid) ?: return
         val target = teleporter.targetLocation.toLocation()
         if (target == null) {
-            TeleporterCooldownService.cancelUse(player.uniqueId, use)
+            TeleporterCooldownService.cancelUse(playerUuid, use)
             return
         }
 
@@ -40,9 +43,9 @@ object PlayerMoveListener : Listener {
                     player.playTeleportSound()
                 }
 
-                TeleporterCooldownService.finishUse(player.uniqueId, use)
+                TeleporterCooldownService.finishUse(playerUuid, use)
             } catch (throwable: Throwable) {
-                TeleporterCooldownService.cancelUse(player.uniqueId, use)
+                TeleporterCooldownService.cancelUse(playerUuid, use)
                 throw throwable
             }
         }

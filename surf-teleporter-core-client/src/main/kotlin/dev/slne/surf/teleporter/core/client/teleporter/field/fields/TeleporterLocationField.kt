@@ -11,6 +11,8 @@ class TeleporterLocationField(
     override val fieldDisplayName: String,
     override val initialValue: TeleporterPosition
 ) : TeleporterField<TeleporterPosition> {
+
+    @Volatile
     override var currentValue: TeleporterPosition = initialValue
         private set
 

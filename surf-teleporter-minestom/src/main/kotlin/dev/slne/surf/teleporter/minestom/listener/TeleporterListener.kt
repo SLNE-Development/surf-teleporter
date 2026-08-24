@@ -38,26 +38,28 @@ class TeleporterListener : EventRegistrar {
         if (!hasChangedBlock(player.position, event.newPosition)) return
 
         if (player.gameMode == GameMode.SPECTATOR) return
+        if (TeleporterService.teleporterCount == 0) return
 
         val instance = player.instance ?: return
         val position = event.newPosition.toTeleporterPosition(instance) ?: return
         val teleporter = TeleporterService.getTeleporterAt(position) ?: return
 
-        val use = TeleporterCooldownService.startUse(player.uuid) ?: return
+        val playerUuid = player.uuid
+        val use = TeleporterCooldownService.startUse(playerUuid) ?: return
 
         val move = player.moveTo(teleporter.targetLocation)
         if (move == null) {
-            TeleporterCooldownService.cancelUse(player.uuid, use)
+            TeleporterCooldownService.cancelUse(playerUuid, use)
             return
         }
 
         minestomScope.launch {
             try {
                 move.await()
-                TeleporterCooldownService.finishUse(player.uuid, use)
+                TeleporterCooldownService.finishUse(playerUuid, use)
                 player.playTeleportSound()
             } catch (throwable: Throwable) {
-                TeleporterCooldownService.cancelUse(player.uuid, use)
+                TeleporterCooldownService.cancelUse(playerUuid, use)
                 throw throwable
             }
         }

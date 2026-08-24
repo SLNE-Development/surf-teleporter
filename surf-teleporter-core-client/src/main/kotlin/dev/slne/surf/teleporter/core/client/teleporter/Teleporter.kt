@@ -1,10 +1,10 @@
 package dev.slne.surf.teleporter.core.client.teleporter
 
+import dev.slne.surf.api.core.util.mutableObjectListOf
 import dev.slne.surf.teleporter.core.client.teleporter.field.TeleporterFieldParseResult
 import dev.slne.surf.teleporter.core.client.teleporter.field.fields.TeleporterBoxField
 import dev.slne.surf.teleporter.core.client.teleporter.field.fields.TeleporterLocationField
 import dev.slne.surf.teleporter.core.client.teleporter.field.fields.TeleporterNameField
-import dev.slne.surf.api.core.util.mutableObjectListOf
 import it.unimi.dsi.fastutil.objects.ObjectList
 import java.util.*
 import kotlin.math.max
@@ -70,6 +70,8 @@ class Teleporter(
         val origin = originLocation
         if (position.worldKey != origin.worldKey) return false
 
+        val (width, length, height) = boxField.currentValue
+
         val originX = origin.blockX.toDouble()
         val originY = origin.blockY.toDouble()
         val originZ = origin.blockZ.toDouble()
@@ -107,10 +109,11 @@ class Teleporter(
         return results
     }
 
+    @Suppress("ConvertTwoComparisonsToRangeCheck")
     private fun between(value: Double, first: Double, second: Double): Boolean {
         val lower = min(first, second)
         val upper = max(first, second)
 
-        return value in lower..<upper
+        return value >= lower && value < upper
     }
 }

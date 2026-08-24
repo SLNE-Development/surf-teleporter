@@ -18,7 +18,7 @@ class TeleporterBoxFieldTest {
         val field = TeleporterBoxField(3.0, 3.0, 3.0)
 
         assertIs<TeleporterFieldParseResult.Success<*>>(field.parse("1.5x2x3"))
-        assertEquals(Triple(1.5, 2.0, 3.0), field.currentValue)
+        assertEquals(TeleporterBox(1.5, 2.0, 3.0), field.currentValue)
     }
 
     @Test
@@ -26,7 +26,7 @@ class TeleporterBoxFieldTest {
         val field = TeleporterBoxField(3.0, 3.0, 3.0)
 
         assertSame(TeleporterBoxField.WrongSplitSizeResult, field.parse("3x3"))
-        assertEquals(Triple(3.0, 3.0, 3.0), field.currentValue)
+        assertEquals(TeleporterBox(3.0, 3.0, 3.0), field.currentValue)
     }
 
     @Test
@@ -34,6 +34,6 @@ class TeleporterBoxFieldTest {
         val field = TeleporterBoxField(3.0, 3.0, 3.0)
 
         assertSame(TeleporterBoxField.ArgumentsNotParsableResult, field.parse("3xAx3"))
-        assertEquals(Triple(3.0, 3.0, 3.0), field.currentValue)
+        assertEquals(TeleporterBox(3.0, 3.0, 3.0), field.currentValue)
     }
 }

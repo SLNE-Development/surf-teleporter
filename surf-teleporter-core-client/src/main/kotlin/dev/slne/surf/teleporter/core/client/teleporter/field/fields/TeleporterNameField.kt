@@ -9,6 +9,7 @@ class TeleporterNameField(
     override val fieldName: String = "teleporter_name"
     override val fieldDisplayName: String = "Name"
 
+    @Volatile
     override var currentValue: String = initialValue
         private set
 

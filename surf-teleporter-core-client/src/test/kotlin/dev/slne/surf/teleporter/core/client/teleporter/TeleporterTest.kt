@@ -49,6 +49,15 @@ class TeleporterTest {
     }
 
     @Test
+    fun `covers no position that carries no number`() {
+        val teleporter = teleporter(width = 3.0, length = 3.0, height = 3.0)
+
+        assertFalse(teleporter.contains(position(Double.NaN, 64.0, 10.0)))
+        assertFalse(teleporter.contains(position(10.0, Double.NaN, 10.0)))
+        assertFalse(teleporter.contains(position(10.0, 64.0, Double.NaN)))
+    }
+
+    @Test
     fun `covers nothing while a side is zero`() {
         val teleporter = teleporter(width = 0.0, length = 3.0, height = 3.0)
 

@@ -1,30 +1,36 @@
 package dev.slne.surf.teleporter.core.client.teleporter
 
 import dev.slne.surf.teleporter.core.client.storage.TeleporterStorage
-import java.util.concurrent.CopyOnWriteArrayList
+import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import it.unimi.dsi.fastutil.objects.ObjectImmutableList
 
 /**
  * Manages all registered teleporters.
  */
 object TeleporterService {
 
+    private val lock = Any()
+
+    @Volatile
+    private var registered: ObjectImmutableList<Teleporter> = ObjectImmutableList.of()
+
     /**
      * Every currently registered teleporter.
      */
-    val teleporters: List<Teleporter>
-        field = CopyOnWriteArrayList<Teleporter>()
+    val teleporters: List<Teleporter> get() = registered
 
     /**
      * How many teleporters are currently registered.
      */
-    val teleporterCount get() = teleporters.size
+    val teleporterCount get() = registered.size
 
     /**
      * Replaces every registered teleporter with the stored ones.
      */
     fun registerTeleporters() {
-        teleporters.clear()
-        teleporters.addAll(TeleporterStorage.loadTeleporters())
+        synchronized(lock) {
+            registered = ObjectImmutableList(TeleporterStorage.loadTeleporters())
+        }
     }
 
     /**
@@ -33,9 +39,15 @@ object TeleporterService {
      * @param teleporter the teleporter to register
      */
     fun registerTeleporter(teleporter: Teleporter) {
-        teleporters.add(teleporter)
+        synchronized(lock) {
+            val current = registered
+            val next = ObjectArrayList<Teleporter>(current.size + 1)
+            next.addAll(current)
+            next.add(teleporter)
+            registered = ObjectImmutableList(next)
 
-        saveTeleporters()
+            saveTeleporters()
+        }
     }
 
     /**
@@ -44,9 +56,13 @@ object TeleporterService {
      * @param teleporter the teleporter to unregister
      */
     fun unregisterTeleporter(teleporter: Teleporter) {
-        teleporters.remove(teleporter)
+        synchronized(lock) {
+            val next = ObjectArrayList(registered)
+            next.remove(teleporter)
+            registered = ObjectImmutableList(next)
 
-        saveTeleporters()
+            saveTeleporters()
+        }
     }
 
     /**
@@ -55,14 +71,27 @@ object TeleporterService {
      * @param position the position to check
      * @return the teleporter at the given position, or `null` if there is none
      */
+    @Suppress("ReplaceManualRangeWithIndicesCalls")
     fun getTeleporterAt(position: TeleporterPosition): Teleporter? {
-        return teleporters.find { it.contains(position) }
+        val teleporters = registered
+
+        for (index in 0 until teleporters.size) {
+            val teleporter = teleporters[index]
+
+            if (teleporter.contains(position)) {
+                return teleporter
+            }
+        }
+
+        return null
     }
 
     /**
      * Stores every registered teleporter.
      */
     fun saveTeleporters() {
-        TeleporterStorage.saveTeleporters(teleporters)
+        synchronized(lock) {
+            TeleporterStorage.saveTeleporters(registered)
+        }
     }
 }
