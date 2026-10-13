@@ -4,10 +4,6 @@ plugins {
     id("dev.slne.surf.api.gradle.minestom")
 }
 
-repositories {
-    mavenLocal()
-}
-
 minestomPluginFile {
     main = "dev.slne.surf.teleporter.minestom.SurfTeleporterMinestomPlugin"
     authors = listOf("Jo_field", "Ammo", "twisti")
