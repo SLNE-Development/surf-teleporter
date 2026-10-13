@@ -1,11 +1,11 @@
 package dev.slne.surf.teleporter.minestom.command
 
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.anyExecutor
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.blockPositionArgument
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.booleanArgument
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandTree
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.literalArgument
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutor
+import dev.slne.surf.api.minestom.command.dsl.anyExecutor
+import dev.slne.surf.api.minestom.command.dsl.blockPositionArgument
+import dev.slne.surf.api.minestom.command.dsl.booleanArgument
+import dev.slne.surf.api.minestom.command.dsl.commandTree
+import dev.slne.surf.api.minestom.command.dsl.literalArgument
+import dev.slne.surf.api.minestom.command.dsl.playerExecutor
 import dev.slne.surf.teleporter.core.client.message.TeleporterMessages
 import dev.slne.surf.teleporter.core.client.permission.TeleporterPermissions
 import dev.slne.surf.teleporter.core.client.teleporter.TeleporterService
