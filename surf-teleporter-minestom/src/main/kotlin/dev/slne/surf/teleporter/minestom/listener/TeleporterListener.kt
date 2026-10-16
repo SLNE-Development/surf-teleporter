@@ -1,10 +1,9 @@
 package dev.slne.surf.teleporter.minestom.listener
 
-import com.google.inject.Singleton
-import dev.slne.minestom.lobby.api.coroutine.minestomScope
-import dev.slne.minestom.lobby.api.event.EventRegistrar
-import dev.slne.minestom.lobby.api.extension.addListener
-import dev.slne.minestom.lobby.api.player.requireLobbyPlayer
+import dev.slne.surf.api.minestom.coroutine.minestomScope
+import dev.slne.surf.api.minestom.event.EventRegistrar
+import dev.slne.surf.api.minestom.extension.addListener
+import dev.slne.surf.api.minestom.permission.hasPermission
 import dev.slne.surf.teleporter.core.client.message.TeleporterMessages
 import dev.slne.surf.teleporter.core.client.permission.TeleporterPermissions
 import dev.slne.surf.teleporter.core.client.sound.playTeleportSound
@@ -25,8 +24,7 @@ import net.minestom.server.event.player.PlayerMoveEvent
 /**
  * Handles everything players do to teleporters: stepping onto them and touching them.
  */
-@Singleton
-class TeleporterListener : EventRegistrar {
+object TeleporterListener : EventRegistrar {
 
     override fun register(node: EventNode<Event>) {
         node.addListener(::onPlayerMove)
@@ -68,9 +66,7 @@ class TeleporterListener : EventRegistrar {
     private fun onBlockInteract(event: PlayerBlockInteractEvent) {
         val player = event.player
 
-        if (!player.requireLobbyPlayer()
-                .hasPermission(TeleporterPermissions.COMMAND_TELEPORTER_GENERIC)
-        ) {
+        if (!player.hasPermission(TeleporterPermissions.COMMAND_TELEPORTER_GENERIC)) {
             return
         }
 

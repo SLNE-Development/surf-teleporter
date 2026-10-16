@@ -4,13 +4,13 @@ import com.google.auto.service.AutoService
 import dev.slne.surf.teleporter.core.client.storage.TeleporterNbtStorage
 import dev.slne.surf.teleporter.core.client.storage.TeleporterStorage
 import dev.slne.surf.teleporter.core.client.teleporter.Teleporter
-import dev.slne.surf.teleporter.minestom.SurfTeleporterMinestomEntrypoint
+import dev.slne.surf.teleporter.minestom.SurfTeleporterMinestomPlugin
 import it.unimi.dsi.fastutil.objects.ObjectList
 
 @AutoService(TeleporterStorage::class)
 class MinestomTeleporterStorage : TeleporterStorage {
     private val storage by lazy {
-        TeleporterNbtStorage.inDirectory(SurfTeleporterMinestomEntrypoint.dataPath)
+        TeleporterNbtStorage.inDirectory(SurfTeleporterMinestomPlugin.dataDirectory)
     }
 
     override fun loadTeleporters(): ObjectList<Teleporter> = storage.loadTeleporters()

@@ -1,7 +1,6 @@
 package dev.slne.surf.teleporter.minestom.teleporter
 
-import dev.slne.minestom.lobby.api.extension.InstanceManager
-import dev.slne.minestom.lobby.api.instance.worldKey
+import dev.slne.surf.api.minestom.extension.InstanceManager
 import dev.slne.surf.teleporter.core.client.teleporter.TeleporterPosition
 import net.kyori.adventure.key.Key
 import net.minestom.server.coordinate.Point

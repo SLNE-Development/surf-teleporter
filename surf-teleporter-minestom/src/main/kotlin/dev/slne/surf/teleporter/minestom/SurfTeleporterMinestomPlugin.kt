@@ -1,20 +1,17 @@
 package dev.slne.surf.teleporter.minestom
 
-import com.google.auto.service.AutoService
-import dev.slne.minestom.lobby.api.plugin.MinestomPlugin
-import dev.slne.minestom.lobby.api.plugin.annotation.MinestomPluginMeta
-import dev.slne.surf.teleporter.minestom.command.TeleporterCommandRegistrar
+import dev.slne.surf.api.minestom.plugin.SurfMinestomPlugin
+import dev.slne.surf.teleporter.core.client.teleporter.TeleporterService
+import dev.slne.surf.teleporter.minestom.command.teleporterCommand
 import dev.slne.surf.teleporter.minestom.listener.TeleporterListener
 
-@AutoService(MinestomPlugin::class)
-@MinestomPluginMeta(
-    "surf-teleporter-minestom",
-    dependsOn = ["surf-api-minestom"]
-)
-class SurfTeleporterMinestomPlugin :
-    MinestomPlugin(SurfTeleporterMinestomEntrypoint::class.java) {
-    override fun configurePlugin() {
-        bindEventRegistrar<TeleporterListener>()
-        bindCommandRegistrar<TeleporterCommandRegistrar>()
+object SurfTeleporterMinestomPlugin : SurfMinestomPlugin() {
+    override suspend fun onLoad() {
+        TeleporterService.registerTeleporters()
+    }
+
+    override suspend fun onEnable() {
+        teleporterCommand()
+        TeleporterListener.register(eventNode)
     }
 }
